@@ -108,7 +108,7 @@ class LockerManagerGUI:
             ("0", 3, 0), ("Effacer", 3, 1)
         ]
         for (text, row, column) in buttons:
-            button = tk.Button(self.keypad_frame, text=text, background="light green", width=12,
+            button = tk.Button(self.keypad_frame, text=text, background="white", width=12,
                                command=lambda t=text: self.keypad_input(t))
             button.grid(row=row, column=column, padx=5, pady=5)
 
