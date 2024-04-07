@@ -64,7 +64,7 @@ class LockerManagerGUI:
 
         for i in range(1, num_lockers + 1):
             button = tk.Button(master, text=f"Casier {i}", width=8, command=lambda num=i: self.toggle_locker(num))
-            button.grid(row=(i-1)//5, column=(i-1)%5, padx=5, pady=5)
+            button.grid(row=(i-1)//5, column=(i-1) % 5, padx=5, pady=5)
             self.locker_buttons.append(button)
             self.update_locker_button(i)
 
@@ -72,7 +72,8 @@ class LockerManagerGUI:
                                                     "casier:")
         self.password_label.grid(row=(num_lockers-1)//5 + 2, column=0, columnspan=5, pady=5)
 
-        self.password_entry = tk.Entry(master, textvariable=self.current_password, show="*", width=30)
+        self.password_entry = tk.Entry(master, textvariable=self.current_password, show="*",
+                                       width=10, background="white")
         self.password_entry.grid(row=(num_lockers-1)//5 + 3, column=0, columnspan=5, pady=5)
 
         self.keypad_frame = tk.Frame(master)
@@ -107,7 +108,8 @@ class LockerManagerGUI:
             ("0", 3, 0), ("Effacer", 3, 1)
         ]
         for (text, row, column) in buttons:
-            button = tk.Button(self.keypad_frame, text=text, width=8, command=lambda t=text: self.keypad_input(t))
+            button = tk.Button(self.keypad_frame, text=text, background="light green", width=12,
+                               command=lambda t=text: self.keypad_input(t))
             button.grid(row=row, column=column, padx=5, pady=5)
 
     def keypad_input(self, value):
@@ -127,5 +129,6 @@ num_lockers = 20
 
 root = tk.Tk()
 root.title("Gestion des Casiers")
+root.configure(background="white")  # couleur de fond
 app = LockerManagerGUI(root, num_lockers)
 root.mainloop()
