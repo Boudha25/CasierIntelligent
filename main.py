@@ -4,28 +4,31 @@ import tkinter as tk
 class Locker:
     def __init__(self, locker_number):
         self.locker_number = locker_number
-        self.password = ""
+        self.password = ""  # Mot de passe des usagers.
         self.locked = False  # Initialiser tous les casiers comme déverrouillés.
+        self.master_password = "88888888"  # Définir le mot de passe maître
 
     def lock(self, password=""):
         if password and 4 <= len(password) <= 8:  # Vérifier si un mot de passe est fourni et s'il est valide.
             self.password = password
             self.locked = True
-            return f"Locker {self.locker_number} verrouillé."
+            return f"Casier {self.locker_number} est verrouillé."
         else:
             return "Mot de passe invalide. Le casier n'a pas été verrouillé."
 
     def unlock(self, password=""):
         if not self.locked:  # Vérifier si le casier est déjà déverrouillé.
             return f"Le casier {self.locker_number} est déjà déverrouillé."
-        elif password == self.password:  # Vérifier si le mot de passe est correct.
+        # Vérifier si le mot de passe est correct ou le mot de passe maître est saisi.
+        elif password == self.password or password == self.master_password:
             self.locked = False
-            return f"Locker {self.locker_number} déverrouillé."
+            return f"Casier {self.locker_number} est déverrouillé."
         else:
             return "Mot de passe incorrect."
 
     def is_locked(self):
         return self.locked
+
 
 
 class LockerManager:
@@ -94,8 +97,10 @@ class LockerManagerGUI:
             self.current_password.set("")
         self.update_locker_button(locker_number)
         self.update_status(message)
-        # Effacer le message et le champ mot de passe après 10 secondes.
-        self.master.after(10000, self.clear_status)
+        # Effacer le champ mot de passe après avoir verrouillé ou déverrouillé un casier.
+        self.clear_password()
+        # Effacer le statut après 30 secondes
+        self.master.after(30000, self.clear_status)
 
     def update_locker_button(self, locker_number):
         if self.locker_manager.is_locked(locker_number):
@@ -124,14 +129,17 @@ class LockerManagerGUI:
         self.current_password.set(current_password)
         self.password_entry.icursor(tk.END)  # Place le curseur à la fin du champ de mot de passe.
         self.password_entry.focus()  # Place le curseur dans le champ de mot de passe.
+        self.master.after(30000, self.clear_password)
 
     def update_status(self, message):
         self.status_label.config(text=message)
 
-    def clear_status(self):
-        self.status_label.config(text="Bienvenue Empire47.")
+    def clear_password(self):
         self.current_password.set("")  # Efface le champ mot de passe.
         self.password_entry.icursor(tk.END)  # Place le curseur à la fin du champ de mot de passe
+
+    def clear_status(self):
+        self.status_label.config(text="Bienvenue Empire47.")
 
 
 # Exemple d'utilisation
