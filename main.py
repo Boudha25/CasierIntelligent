@@ -30,11 +30,10 @@ class Locker:
         return self.locked
 
 
-
 class LockerManager:
-    def __init__(self, num_lockers):
+    def __init__(self, numb_lockers):
         self.lockers = {}
-        for i in range(1, num_lockers + 1):
+        for i in range(1, numb_lockers + 1):
             self.lockers[i] = Locker(i)
 
     def lock_locker(self, locker_number, password):
@@ -57,15 +56,15 @@ class LockerManager:
 
 
 class LockerManagerGUI:
-    def __init__(self, master, num_lockers):
+    def __init__(self, master, numb_lockers):
         self.master = master
-        self.num_lockers = num_lockers
-        self.locker_manager = LockerManager(num_lockers)
+        self.num_lockers = numb_lockers
+        self.locker_manager = LockerManager(numb_lockers)
         self.current_password = tk.StringVar()
 
         self.locker_buttons = []
 
-        for i in range(1, num_lockers + 1):
+        for i in range(1, numb_lockers + 1):
             button = tk.Button(master, text=f"Casier {i}", width=8, command=lambda num=i: self.toggle_locker(num))
             button.grid(row=(i - 1) // 5, column=(i - 1) % 5, padx=5, pady=5)
             self.locker_buttons.append(button)
@@ -73,18 +72,18 @@ class LockerManagerGUI:
 
         self.password_label = tk.Label(master, text="Entrer un mot de passe de 4 à 8 caractères \n et sélectionner un "
                                                     "casier:", background="white")
-        self.password_label.grid(row=(num_lockers - 1) // 5 + 2, column=0, columnspan=5, pady=5)
+        self.password_label.grid(row=(numb_lockers - 1) // 5 + 2, column=0, columnspan=5, pady=5)
 
         self.password_entry = tk.Entry(master, textvariable=self.current_password, show="*",
                                        width=10, background="white")
-        self.password_entry.grid(row=(num_lockers - 1) // 5 + 3, column=0, columnspan=5, pady=5)
+        self.password_entry.grid(row=(numb_lockers - 1) // 5 + 3, column=0, columnspan=5, pady=5)
         self.password_entry.icursor(tk.END)  # Place le curseur à la fin du champ de mot de passe
 
         self.status_label = tk.Label(master, text="", wraplength=200, background="white")
-        self.status_label.grid(row=(num_lockers - 1) // 5 + 4, columnspan=5, pady=5)
+        self.status_label.grid(row=(numb_lockers - 1) // 5 + 4, columnspan=5, pady=5)
 
         self.keypad_frame = tk.Frame(master)
-        self.keypad_frame.grid(row=(num_lockers - 1) // 5 + 5, column=0, columnspan=5, pady=5)
+        self.keypad_frame.grid(row=(numb_lockers - 1) // 5 + 5, column=0, columnspan=5, pady=5)
 
         self.create_keypad()
 
