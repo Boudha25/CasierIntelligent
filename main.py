@@ -1,5 +1,6 @@
 import tkinter as tk
 import customtkinter as ctk  # Importer customTkinter au lieu de tkinter
+import serial
 
 
 class Locker:
@@ -10,7 +11,8 @@ class Locker:
         self.master_password = "88888888"  # Définir le mot de passe maître
 
     def lock(self, password=""):
-        if password and 4 <= len(password) <= 8:  # Vérifier si un mot de passe est fourni et s'il est valide.
+        # Vérifier si un mot de passe de 4 à 8 chiffres est fourni et s'il est valide.
+        if password and 4 <= len(password) <= 8:
             self.password = password
             self.locked = True
             return f"Casier {self.locker_number} est verrouillé."
@@ -56,6 +58,24 @@ class LockerManager:
             return "Ce casier n'existe pas."
 
 
+class CU48Communication:
+    def __init__(self, port, baudrate=19200):
+        self.ser = serial.Serial(port, baudrate, timeout=1)
+
+    def send_command(self, addr, locker, cmd):
+        command = bytearray([0x02, addr, locker, cmd, 0x03])
+        checksum = sum(command) & 0xFF
+        command.append(checksum)
+        self.ser.write(command)
+
+    def receive_response(self):
+        response = self.ser.read(12)
+        return response
+
+    def close(self):
+        self.ser.close()
+
+
 class LockerManagerGUI:
     def __init__(self, master, numb_lockers):
         self.master = master
@@ -69,7 +89,7 @@ class LockerManagerGUI:
             button = ctk.CTkButton(master, text=f"Casier {i}", width=120, height=50,
                                    font=("Arial", 20),
                                    corner_radius=5,  # Rayon des coins pour un effet arrondi
-                                   border_width=2,  # Largeur de la bordure pour un effet de relief
+                                   border_width=5,  # Largeur de la bordure pour un effet de relief
                                    hover_color="grey",
                                    fg_color="grey",  # Couleur de fond par défaut
                                    command=lambda num=i: self.toggle_locker(num))
@@ -77,13 +97,14 @@ class LockerManagerGUI:
             self.locker_buttons.append(button)
             self.update_locker_button(i)
 
-        self.password_label = ctk.CTkLabel(master, text="Entrer un mot de passe de 4 à 8 caractères, "
+        self.password_label = ctk.CTkLabel(master, text="Entrer un mot de passe de 4 à 8 chiffres, "
                                                         "\n et sélectionner un casier:", font=("Arial", 24))
         self.password_label.grid(row=(numb_lockers - 1) // 5 + 2, column=0, columnspan=5, pady=5)
 
-        self.password_entry = ctk.CTkEntry(master, show="*", textvariable=self.current_password, width=200, height=32)
+        self.password_entry = ctk.CTkEntry(master, show="*", textvariable=self.current_password, width=200, height=40)
         self.password_entry.grid(row=(numb_lockers - 1) // 5 + 3, column=0, columnspan=5, pady=5)
-        self.password_entry.icursor(ctk.END)  # Place le curseur à la fin du champ de mot de passe
+        self.password_entry.focus()  # Met le curseur dans le champ Entry.
+        self.password_entry.icursor(ctk.END)  # Place le curseur à la fin du champ de mot de passe.
 
         self.status_label = ctk.CTkLabel(master, text="", width=400, height=64, font=("Arial", 24))
         self.status_label.grid(row=(numb_lockers - 1) // 5 + 4, columnspan=5, pady=5)
@@ -92,13 +113,14 @@ class LockerManagerGUI:
         self.keypad_frame.grid(row=(numb_lockers - 1) // 5 + 5, column=0, columnspan=5, pady=5)
 
         self.create_keypad()
+        self.clear_status()  # Efface le champ status et écrit le mot de bienvenu.
 
     def toggle_locker(self, locker_number):
         if self.locker_manager.is_locked(locker_number):
             message = self.locker_manager.unlock_locker(locker_number, self.current_password.get())
         else:
             message = self.locker_manager.lock_locker(locker_number, self.current_password.get())
-            # Réinitialiser le champ de mot de passe si le casier est cliqué
+            # Réinitialiser le champ de mot de passe si le casier est cliqué.
             self.current_password.set("")
         self.update_locker_button(locker_number)
         self.update_status(message)
@@ -110,18 +132,20 @@ class LockerManagerGUI:
     def update_locker_button(self, locker_number):
         locker = self.locker_manager.lockers[locker_number]
         if locker.is_locked():
-            self.locker_buttons[locker_number - 1].configure(fg_color="red")  # Rouge si le casier est verrouillé
+            # Rouge si le casier est verrouillé.
+            self.locker_buttons[locker_number - 1].configure(fg_color="red")
         else:
-            self.locker_buttons[locker_number - 1].configure(fg_color="green")  # Vert si le casier est déverrouillé
-        self.locker_buttons[
-            locker_number - 1].update()  # Mettre à jour le bouton pour refléter le changement de couleur
+            # Vert si le casier est déverrouillé.
+            self.locker_buttons[locker_number - 1].configure(fg_color="green")
+        # Mettre à jour le bouton pour refléter le changement de couleur.
+        self.locker_buttons[locker_number - 1].update()
 
     def create_keypad(self):
         buttons = [
             ("1", 0, 0), ("2", 0, 1), ("3", 0, 2),
             ("4", 1, 0), ("5", 1, 1), ("6", 1, 2),
             ("7", 2, 0), ("8", 2, 1), ("9", 2, 2),
-                         ("0", 3, 1), ("<<", 3, 2)
+            ("0", 3, 1), ("<<", 3, 2)
         ]
         for (text, row, column) in buttons:
             button = ctk.CTkButton(self.keypad_frame, text=text,
@@ -140,7 +164,6 @@ class LockerManagerGUI:
             current_password += value
         self.current_password.set(current_password)
         self.password_entry.icursor(tk.END)  # Place le curseur à la fin du champ de mot de passe.
-        self.password_entry.focus()  # Place le curseur dans le champ de mot de passe.
         self.master.after(30000, self.clear_password)
 
     def update_status(self, message):
