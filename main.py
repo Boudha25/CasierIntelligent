@@ -1,3 +1,4 @@
+import time
 import tkinter as tk
 import customtkinter as ctk  # Importer customTkinter au lieu de tkinter
 import serial
@@ -61,6 +62,7 @@ class LockerManager:
 class CU48Communication:
     def __init__(self, port, baudrate=19200):
         self.ser = serial.Serial(port, baudrate, timeout=1)
+        self.locker_states = {}  # Dictionnaire pour stocker l'état de chaque casier.
 
     def send_command(self, addr, locker, cmd):
         command = bytearray([0x02, addr, locker, cmd, 0x03])
@@ -71,6 +73,31 @@ class CU48Communication:
     def receive_response(self):
         response = self.ser.read(12)
         return response
+
+    def get_locker_status(self):
+        print("Interrogation de l'état des casiers...")
+        self.send_command(0x0A, 0x30, 0x50)  # Envoyer la commande pour obtenir l'état de tous les casiers
+        time.sleep(0.1)  # Attendre un court instant pour la réponse
+        response = self.receive_response()
+
+        # Vérifier si la réponse est valide
+        if len(response) == 12 and response[0] == 0x02 and response[11] == 0x03:
+            # Analyser la réponse pour mettre à jour l'état de chaque casier
+            for i in range(1, 49):
+                byte_index = (i - 1) // 8 + 1
+                bit_index = (i - 1) % 8
+                locker_num = byte_index * 8 - bit_index
+                locker_state = (response[byte_index] >> bit_index) & 1
+                if locker_num not in self.locker_states:
+                    self.locker_states[locker_num] = locker_state
+                else:
+                    # Mettre à jour l'état du casier seulement s'il a changé
+                    if self.locker_states[locker_num] != locker_state:
+                        print(f"Changement d'état pour le casier {locker_num}. "
+                              f"Nouvel état : {'Verrouillé' if locker_state else 'Déverrouillé'}")
+                        self.locker_states[locker_num] = locker_state
+        else:
+            print("Réponse invalide.")
 
     def close(self):
         self.ser.close()
@@ -184,4 +211,10 @@ root = tk.Tk()
 root.title("Gestion des Casiers")
 root.configure(background="white")  # couleur de fond
 app = LockerManagerGUI(root, num_lockers)
+
+# Exemple d'utilisation
+# cu48 = CU48Communication('/dev/ttyUSB0')
+# cu48 = CU48Communication('com1')
+
 root.mainloop()
+
