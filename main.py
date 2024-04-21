@@ -60,9 +60,10 @@ class LockerManager:
 
 
 class CU48Communication:
-    def __init__(self, port, baudrate=19200):
+    def __init__(self, port, baudrate=19200, status_label=None):
         self.ser = serial.Serial(port, baudrate, timeout=1)
         self.locker_states = {}  # Dictionnaire pour stocker l'état de chaque casier.
+        self.status_label = status_label  # Ajouter le status_label comme attribut.
 
     def send_command(self, addr, locker, cmd):
         command = bytearray([0x02, addr, locker, cmd, 0x03])
@@ -75,7 +76,11 @@ class CU48Communication:
         return response
 
     def get_locker_status(self):
-        print("Interrogation de l'état des casiers...")
+        if self.status_label:
+            self.update_status("Interrogation de l'état des casiers...")
+        else:
+            print("Interrogation de l'état des casiers...")
+
         self.send_command(0x0A, 0x30, 0x50)  # Envoyer la commande pour obtenir l'état de tous les casiers
         time.sleep(0.1)  # Attendre un court instant pour la réponse
         response = self.receive_response()
@@ -93,11 +98,24 @@ class CU48Communication:
                 else:
                     # Mettre à jour l'état du casier seulement s'il a changé
                     if self.locker_states[locker_num] != locker_state:
-                        print(f"Changement d'état pour le casier {locker_num}. "
-                              f"Nouvel état : {'Verrouillé' if locker_state else 'Déverrouillé'}")
+                        status_message = f"Changement d'état pour le casier {locker_num}. " \
+                                         f"Nouvel état : {'Verrouillé' if locker_state else 'Déverrouillé'}"
+                        if self.status_label:
+                            self.update_status(status_message)
+                        else:
+                            print(status_message)
                         self.locker_states[locker_num] = locker_state
         else:
-            print("Réponse invalide.")
+            if self.status_label:
+                self.update_status("Réponse invalide.")
+            else:
+                print("Réponse invalide.")
+
+    def update_status(self, message):  # Affiche-les prints dans le status_label.
+        if self.status_label:
+            self.status_label.configure(text=message)
+        else:
+            print(message)
 
     def close(self):
         self.ser.close()
@@ -213,8 +231,7 @@ root.configure(background="white")  # couleur de fond
 app = LockerManagerGUI(root, num_lockers)
 
 # Exemple d'utilisation
-# cu48 = CU48Communication('/dev/ttyUSB0')
-# cu48 = CU48Communication('com1')
+# cu48 = CU48Communication('/dev/ttyUSB0', status_label=app.status_label)
+# cu48 = CU48Communication('com1', status_label=app.status_label)
 
 root.mainloop()
-
