@@ -35,20 +35,23 @@ class Locker:
 
 
 class LockerManager:
-    def __init__(self, numb_lockers):
+    def __init__(self, numb_lockers, cu48_communication):
         self.lockers = {}
+        self.cu48_communication = cu48_communication
         for i in range(1, numb_lockers + 1):
             self.lockers[i] = Locker(i)
 
     def lock_locker(self, locker_number, password):
         if locker_number in self.lockers:
-            return self.lockers[locker_number].lock(password)
+            message = self.lockers[locker_number].lock(password)
+            return message
         else:
             return "Ce casier n'existe pas."
 
     def unlock_locker(self, locker_number, password):
         if locker_number in self.lockers:
-            return self.lockers[locker_number].unlock(password)
+            message = self.lockers[locker_number].unlock(password)
+            return message
         else:
             return "Ce casier n'existe pas."
 
@@ -69,10 +72,14 @@ class CU48Communication:
         command = bytearray([0x02, addr, locker, cmd, 0x03])
         checksum = sum(command) & 0xFF
         command.append(checksum)
+        print(f"Commande envoyée : {command.hex()}")  # Afficher la commande envoyée en hexadécimal
         self.ser.write(command)
+        print("Commande envoyée:",
+              command.hex())  # Ajouter cette ligne pour afficher la commande envoyée en hexadécimal
 
     def receive_response(self):
         response = self.ser.read(12)
+        print("Réponse reçue:", response.hex())  # Ajouter cette ligne pour afficher la réponse reçue en hexadécimal
         return response
 
     def get_locker_status(self):
@@ -81,9 +88,18 @@ class CU48Communication:
         else:
             print("Interrogation de l'état des casiers...")
 
-        self.send_command(0x0A, 0x30, 0x50)  # Envoyer la commande pour obtenir l'état de tous les casiers
-        time.sleep(0.1)  # Attendre un court instant pour la réponse
+        # Commande pour obtenir l'état de tous les casiers
+        self.send_command(0x00, 0x30, 0x50)
+
+        # Attendre un court instant pour la réponse
+        time.sleep(0.1)
+
+        # Attendre que la commande soit envoyée
+        self.ser.flush()
+
+        # Lecture de la réponse
         response = self.receive_response()
+        print("Réponse reçue :", response)
 
         # Vérifier si la réponse est valide
         if len(response) == 12 and response[0] == 0x02 and response[11] == 0x03:
@@ -122,13 +138,16 @@ class CU48Communication:
 
 
 class LockerManagerGUI:
-    def __init__(self, master, numb_lockers):
+    def __init__(self, master, numb_lockers, cu48_communication):  # Ajouter cu48_communication comme argument
         self.master = master
         self.num_lockers = numb_lockers
-        self.locker_manager = LockerManager(numb_lockers)
+        self.cu48_communication = cu48_communication  # Assigner l'instance de CU48Communication
+        self.locker_manager = LockerManager(numb_lockers, cu48_communication)  # Passer cu48_communication
         self.current_password = ctk.StringVar()
 
         self.locker_buttons = []
+        # Appeler la méthode pour interroger l'état des serrures au démarrage
+        self.get_locker_status_on_startup()
 
         for i in range(1, numb_lockers + 1):
             button = ctk.CTkButton(master, text=f"Casier {i}", width=120, height=50,
@@ -160,11 +179,19 @@ class LockerManagerGUI:
         self.create_keypad()
         self.clear_status()  # Efface le champ status et écrit le mot de bienvenu.
 
+    def get_locker_status_on_startup(self):
+        # Appeler la méthode de CU48Communication pour obtenir l'état des serrures
+        self.cu48_communication.get_locker_status()
+
     def toggle_locker(self, locker_number):
         if self.locker_manager.is_locked(locker_number):
             message = self.locker_manager.unlock_locker(locker_number, self.current_password.get())
+            # Envoyer une commande de déverrouillage sur le port série
+            self.cu48_communication.send_command(0x00, locker_number - 1, 0x51)  # Soustraire 1 pour le numéro d'adresse correct
         else:
             message = self.locker_manager.lock_locker(locker_number, self.current_password.get())
+            # Envoyer une commande de verrouillage sur le port série
+            self.cu48_communication.send_command(0x00, locker_number - 1, 0x50)  # Soustraire 1 pour le numéro d'adresse correct
             # Réinitialiser le champ de mot de passe si le casier est cliqué.
             self.current_password.set("")
         self.update_locker_button(locker_number)
@@ -228,10 +255,11 @@ num_lockers = 20
 root = tk.Tk()
 root.title("Gestion des Casiers")
 root.configure(background="white")  # couleur de fond
-app = LockerManagerGUI(root, num_lockers)
 
-# Exemple d'utilisation
-# cu48 = CU48Communication('/dev/ttyUSB0', status_label=app.status_label)
-# cu48 = CU48Communication('com1', status_label=app.status_label)
+# Créer une instance de CU48Communication avant de créer LockerManagerGUI
+cu48 = CU48Communication('com3', status_label=None)  # Remplacer 'com3' par le port approprié
+
+# Créer une instance de LockerManagerGUI en passant cu48 comme argument
+app = LockerManagerGUI(root, num_lockers, cu48)
 
 root.mainloop()
