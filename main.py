@@ -31,11 +31,13 @@ class Locker:
     def unlock(self, password=""):
         if not self.locked:
             return f"Le casier {self.locker_number} est déjà déverrouillé."
-        elif password == self.db_manager.get_master_password():
+        elif hashlib.sha256(password.encode()).hexdigest() == self.db_manager.get_master_password():
+            # Si le mot de passe est le mot de passe maître, déverrouiller le casier
             self.locked = False
             self.db_manager.update_locker_state(self.locker_number, False)
-            return f"Casier {self.locker_number} est déverrouillé par le mot de passe maître."
+            return f"Casier {self.locker_number} est déverrouillé."
         elif hashlib.sha256(password.encode()).hexdigest() == self.password:
+            # Si le mot de passe correspond au mot de passe stocké dans le casier, déverrouiller le casier
             self.locked = False
             self.db_manager.update_locker_state(self.locker_number, False)
             return f"Casier {self.locker_number} est déverrouillé."
@@ -90,23 +92,37 @@ class LockerManager:
 
 class DatabaseManager:
     def __init__(self, db_file):
-        self.conn = sqlite3.connect(db_file)
-        self.cursor = self.conn.cursor()
-        self.create_tables()
+        try:
+            self.conn = sqlite3.connect(db_file)
+            self.cursor = self.conn.cursor()
+            self.create_tables()
+        except sqlite3.Error as e:
+            print("Erreur lors de la connexion à la base de données:", e)
 
     def create_tables(self):
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS lockers (
-                                locker_number INTEGER PRIMARY KEY,
-                                locked INTEGER
-                              )''')
-        self.conn.commit()
+        try:
+            # Créer les tables si elles n'existent pas déjà
+            self.cursor.execute('''CREATE TABLE IF NOT EXISTS passwords (
+                                    locker_number INTEGER PRIMARY KEY,
+                                    password TEXT UNIQUE
+                                  )''')
+            self.cursor.execute('''CREATE TABLE IF NOT EXISTS lockers (
+                                    locker_number INTEGER PRIMARY KEY,
+                                    locked INTEGER
+                                  )''')
+            self.conn.commit()
 
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS lockers (
-                                locker_number INTEGER PRIMARY KEY,
-                                locked INTEGER
-                              )''')
-
-        self.conn.commit()
+            # Vérifier si le mot de passe maître par défaut existe déjà dans la base de données
+            default_master_password = self.get_master_password()
+            if default_master_password is None:
+                # S'il n'existe pas, générer un hachage pour le mot de passe maître par défaut
+                # et l'ajouter à la base de données.
+                hashed_default_master_password = hashlib.sha256(b"88888888").hexdigest()
+                self.cursor.execute('''INSERT INTO passwords (locker_number, password) VALUES (?, ?)''',
+                                    (0, hashed_default_master_password))
+                self.conn.commit()
+        except sqlite3.Error as e:
+            print("Erreur lors de la création des tables dans la base de données:", e)
 
     def update_password(self, locker_number, password):
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -131,10 +147,9 @@ class DatabaseManager:
         self.cursor.execute('''SELECT password FROM passwords WHERE locker_number = 0''')
         result = self.cursor.fetchone()
         if result is None:
-            return result  # Retourner simplement result sans accéder à son index
+            return None
         else:
-            # Si le mot de passe maître par défaut n'existe pas dans la base de données, retourner une valeur par défaut
-            return "88888888"
+            return result[0]  # Retourner le hachage du mot de passe maître par défaut
 
     def get_locker_state(self, locker_number):
         self.cursor.execute('''SELECT locked FROM lockers WHERE locker_number = ?''', (locker_number,))
@@ -245,15 +260,25 @@ class LockerManagerGUI:
         is_locked = self.locker_manager.is_locked(locker_number)
         password = self.current_password.get()
 
-        if isinstance(is_locked, bool):  # Vérifiez si le retour est un booléen
+        if isinstance(is_locked, bool):
             if is_locked:
                 message = self.locker_manager.unlock_locker(locker_number, password)
-                self.update_locker_button(locker_number)
-                self.update_status(message)
+                if message.startswith("Casier"):
+                    self.update_locker_button(locker_number)
+                    self.update_status(message)
+                    # Envoyer la commande pour déverrouiller le casier
+                    self.cu48_communication.send_command(0x00, locker_number - 1, 0x51)
+                else:
+                    self.update_status(message)
             else:
                 message = self.locker_manager.lock_locker(locker_number, password)
-                self.update_locker_button(locker_number)
-                self.update_status(message)
+                if message.startswith("Casier"):
+                    self.update_locker_button(locker_number)
+                    self.update_status(message)
+                    # Envoyer la commande pour verrouiller le casier
+                    self.cu48_communication.send_command(0x00, locker_number - 1, 0x51)
+                else:
+                    self.update_status(message)
         else:
             # Le casier n'existe pas ou une autre erreur s'est produite
             self.update_status(is_locked)
@@ -261,7 +286,7 @@ class LockerManagerGUI:
         # Effacer le champ mot de passe après avoir verrouillé ou déverrouillé un casier.
         self.clear_password()
         # Effacer le statut après 30 secondes
-#        self.master.after(30000, self.clear_status)
+        self.master.after(30000, self.clear_status)
 
     def update_locker_button(self, locker_number):
         locker = self.locker_manager.lockers[locker_number]
@@ -298,7 +323,6 @@ class LockerManagerGUI:
             current_password += value
         self.current_password.set(current_password)
         self.password_entry.icursor(tk.END)  # Place le curseur à la fin du champ de mot de passe.
-        self.master.after(30000, self.clear_password)
 
     def update_status(self, message):
         self.status_label.configure(text=message)
