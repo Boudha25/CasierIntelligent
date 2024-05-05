@@ -1,28 +1,28 @@
 import hashlib
 import sqlite3
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import Menu
+from tkinter import Menu, messagebox
 import customtkinter as ctk  # Importer customTkinter au lieu de tkinter
 import serial
 
 
 class Locker:
-    def __init__(self, locker_number, db_manager, password=""):
+    def __init__(self, locker_number, database_manager, password=""):
         self.locker_number = locker_number
         self.password = hashlib.sha256(password.encode()).hexdigest() if password else ""
         self.locked = False
-        self.db_manager = db_manager
+        self.database_manager = database_manager
 
     def lock(self, password=""):
-        if password and 4 <= len(password) <= 8:
+        # Vérifier que le mot de passe contient uniquement des chiffres et a une longueur entre 4 et 8 caractères
+        if password and password.isdigit() and 4 <= len(password) <= 8:
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
             self.password = hashed_password
             self.locked = True
             # Mettre à jour le mot de passe dans la base de données
-            self.db_manager.update_password(self.locker_number, password)
+            self.database_manager.update_password(self.locker_number, password)
             # Mettre à jour l'état du casier dans la base de données
-            self.db_manager.update_locker_state(self.locker_number, True)
+            self.database_manager.update_locker_state(self.locker_number, True)
             print(f"État de verrouillage du casier {self.locker_number} mis à jour dans la base de données")
             return f"Casier {self.locker_number} est verrouillé."
         else:
@@ -31,15 +31,15 @@ class Locker:
     def unlock(self, password=""):
         if not self.locked:
             return f"Le casier {self.locker_number} est déjà déverrouillé."
-        elif hashlib.sha256(password.encode()).hexdigest() == self.db_manager.get_master_password():
+        elif hashlib.sha256(password.encode()).hexdigest() == self.database_manager.get_master_password():
             # Si le mot de passe est le mot de passe maître, déverrouiller le casier
             self.locked = False
-            self.db_manager.update_locker_state(self.locker_number, False)
+            self.database_manager.update_locker_state(self.locker_number, False)
             return f"Casier {self.locker_number} est déverrouillé."
         elif hashlib.sha256(password.encode()).hexdigest() == self.password:
             # Si le mot de passe correspond au mot de passe stocké dans le casier, déverrouiller le casier
             self.locked = False
-            self.db_manager.update_locker_state(self.locker_number, False)
+            self.database_manager.update_locker_state(self.locker_number, False)
             return f"Casier {self.locker_number} est déverrouillé."
         else:
             return "Mot de passe incorrect."
@@ -49,10 +49,11 @@ class Locker:
 
 
 class LockerManager:
-    def __init__(self, numb_lockers, cu48_communication, db_file):
+    def __init__(self, numb_lockers, cu48_communication):
+        self.locker_manager = None
         self.lockers = {}
         self.cu48_communication = cu48_communication
-        self.db_manager = DatabaseManager(db_file)  # Créez une instance de DatabaseManager
+        self.db_manager = db_manager  # Créez une instance de DatabaseManager
         self.initialize_lockers(numb_lockers)
 
     def initialize_lockers(self, numb_lockers):
@@ -89,6 +90,9 @@ class LockerManager:
         else:
             return "Ce casier n'existe pas."
 
+    def update_master_password(self, new_master_password_hash):
+        self.db_manager.update_master_password(new_master_password_hash)
+
 
 class DatabaseManager:
     def __init__(self, db_file):
@@ -98,6 +102,12 @@ class DatabaseManager:
             self.create_tables()
         except sqlite3.Error as e:
             print("Erreur lors de la connexion à la base de données:", e)
+
+    def __del__(self):
+        try:
+            self.conn.close()  # Fermer la connexion à la base de données
+        except Exception as e:
+            print("Erreur lors de la fermeture de la connexion à la base de données:", e)
 
     def create_tables(self):
         try:
@@ -125,72 +135,121 @@ class DatabaseManager:
             print("Erreur lors de la création des tables dans la base de données:", e)
 
     def update_password(self, locker_number, password):
-        hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        self.cursor.execute('''INSERT OR REPLACE INTO passwords (locker_number, password)
-                               VALUES (?, ?)''', (locker_number, hashed_password))
-        self.conn.commit()
+        try:
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+            self.cursor.execute('''INSERT OR REPLACE INTO passwords (locker_number, password)
+                                   VALUES (?, ?)''', (locker_number, hashed_password))
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print("Erreur lors de la mise à jour du mot de passe dans la base de données:", e)
 
     def get_password(self, locker_number):
-        self.cursor.execute('''SELECT password FROM passwords WHERE locker_number = ?''', (locker_number,))
-        result = self.cursor.fetchone()
-        if result:
-            return result[0]
-        return None
+        try:
+            self.cursor.execute('''SELECT password FROM passwords WHERE locker_number = ?''', (locker_number,))
+            result = self.cursor.fetchone()
+            if result:
+                return result[0]
+            return None
+        except sqlite3.Error as e:
+            print("Erreur de récupération du mot de passe dans la base de données:", e)
 
     def update_locker_state(self, locker_number, locked):
-        self.cursor.execute('''INSERT OR REPLACE INTO lockers (locker_number, locked)
-                               VALUES (?, ?)''', (locker_number, int(locked)))
-        self.conn.commit()
+        try:
+            self.cursor.execute('''INSERT OR REPLACE INTO lockers (locker_number, locked)
+                                   VALUES (?, ?)''', (locker_number, int(locked)))
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print("Erreur de mise à jour de l'état du casier dans la base de données:", e)
 
     def get_master_password(self):
-        # Récupérer le mot de passe maître par défaut à partir de la base de données
-        self.cursor.execute('''SELECT password FROM passwords WHERE locker_number = 0''')
-        result = self.cursor.fetchone()
-        if result is None:
-            return None
-        else:
-            return result[0]  # Retourner le hachage du mot de passe maître par défaut
+        try:
+            # Récupérer le mot de passe maître par défaut à partir de la base de données
+            self.cursor.execute('''SELECT password FROM passwords WHERE locker_number = 0''')
+            result = self.cursor.fetchone()
+            if result is None:
+                return None
+            else:
+                return result[0]  # Retourner le hachage du mot de passe maître par défaut
+        except sqlite3.Error as e:
+            print("Erreur de récupération du mot de passe maitre dans la base de données:", e)
+
+    def update_master_password(self, new_master_password_hash):
+        try:
+            self.cursor.execute('''UPDATE passwords SET password = ? WHERE locker_number = 0''',
+                                (new_master_password_hash,))
+            self.conn.commit()
+        except sqlite3.Error as e:
+            print("Erreur lors de la mise à jour du mot de passe maître dans la base de données:", e)
 
     def get_locker_state(self, locker_number):
-        self.cursor.execute('''SELECT locked FROM lockers WHERE locker_number = ?''', (locker_number,))
-        result = self.cursor.fetchone()
-        if result:
-            return bool(result[0])
-        return None
+        try:
+            self.cursor.execute('''SELECT locked FROM lockers WHERE locker_number = ?''', (locker_number,))
+            result = self.cursor.fetchone()
+            if result:
+                return bool(result[0])
+            return None
+        except sqlite3.Error as e:
+            print("Erreur de de récupération de l'état du casier dans la base de données:", e)
 
 
 class CU48Communication:
-    def __init__(self, port, baudrate=19200, status_label=None):
-        self.ser = serial.Serial(port, baudrate, timeout=1)
-        self.locker_states = {}  # Dictionnaire pour stocker l'état de chaque casier.
-        self.status_label = status_label  # Ajouter le status_label comme attribut.
+    def __init__(self, port='com3', baudrate=19200, status_label=None):
+        print("Port série utilisé:", port)  # Ajouter ce print pour afficher la valeur du port série
+        try:
+            if port is not None:
+                self.ser = serial.Serial(port, baudrate, timeout=1)
+                self.status_label = status_label  # Ajouter le status_label comme attribut.
+            else:
+                raise ValueError("Aucun port spécifié.")
+
+        except (serial.SerialException, ValueError) as e:
+            print("Erreur lors de l'initialisation de CU48Communication:", e)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        try:
+            self.ser.close()  # Fermer le port série
+        except Exception as e:
+            print("Erreur lors de la fermeture du port série:", e)
 
     def send_command(self, addr, locker, cmd):
-        command = bytearray([0x02, addr, locker, cmd, 0x03])
-        checksum = sum(command) & 0xFF
-        command.append(checksum)
-        self.ser.write(command)
-        print("Commande envoyée en hexadécimal:",
-              command.hex())  # Ajouter cette ligne pour afficher la commande envoyée en hexadécimal.
+        try:
+            command = bytearray([0x02, addr, locker, cmd, 0x03])
+            checksum = sum(command) & 0xFF
+            command.append(checksum)
+            self.ser.write(command)
+            print("Commande envoyée en hexadécimal:", command.hex())
+        except serial.SerialException as e:
+            print("Erreur lors de l'envoi de la commande série:", e)
 
     def update_status(self, message):  # Affiche-les prints dans le status_label.
         if self.status_label:
-            self.status_label.configure(text=message)
+            try:
+                self.status_label.configure(text=message)
+            except Exception as e:
+                print("Erreur lors de la mise à jour de l'état:", e)
         else:
             print(message)
 
     def close(self):
-        self.ser.close()
+        try:
+            self.ser.close()
+        except Exception as e:
+            print("Erreur lors de la fermeture du port série:", e)
 
 
 class LockerManagerGUI:
-    def __init__(self, master, numb_lockers, cu48_communication, db_file):
+    def __init__(self, master, numb_lockers, cu48_communication=None):
         self.master = master
         self.num_lockers = numb_lockers
         self.cu48_communication = cu48_communication
-        self.locker_manager = LockerManager(numb_lockers, cu48_communication, db_file)  # Passer db_file ici
+        self.locker_manager = LockerManager(numb_lockers, cu48_communication)  # Passer db_file ici
         self.current_password = ctk.StringVar()
         self.locker_buttons = []  # Initialiser la liste locker_buttons.
+        self.db_manager = db_manager
+        self.cu48 = None
 
         # Créer les boutons des casiers et les ajouter à la liste locker_buttons
         for i in range(1, numb_lockers + 1):
@@ -223,7 +282,6 @@ class LockerManagerGUI:
 
         self.create_keypad()
         self.clear_status()  # Efface le champ status et écrit le mot de bienvenu.
-        # Lancer une fonction pour interroger régulièrement les serrures
 
         # Créer la barre de menu
         menubar = Menu(master)
@@ -239,21 +297,29 @@ class LockerManagerGUI:
         master.config(menu=menubar)
 
     def open_config_window(self):
-        # Créer et afficher la fenêtre de configuration
-        config_window = tk.Toplevel(self.master)
-        config_window.title("Configuration")
-        config_window.geometry("500x200")
-        config_window.resizable(False, False)
-        config_window.attributes("-topmost", True)  # Mettre la fenêtre au premier plan
+        try:
+            # Vérifier le mot de passe maître avant d'ouvrir la fenêtre de configuration
+            master_password = self.locker_manager.db_manager.get_master_password()
+            if master_password is not None:
+                # Créer et afficher la fenêtre de configuration
+                config_window = tk.Toplevel(self.master)
+                config_window.title("Configuration")
+                config_window.geometry("500x250")
+                config_window.resizable(False, False)
+                config_window.attributes("-topmost", True)  # Mettre la fenêtre au premier plan
 
-        config_window.grab_set()  # Empêcher l'accès à la fenêtre principale
+                config_window.grab_set()  # Empêcher l'accès à la fenêtre principale
 
-        # Passer l'instance de LockerManagerGUI à la fenêtre de configuration
-        ConfigWindow(config_window, self)
+                # Passer l'instance de LockerManagerGUI à la fenêtre de configuration
+                ConfigWindow(config_window, self, master_password)
+            else:
+                messagebox.showerror("Erreur", "Impossible de récupérer le mot de passe maître.")
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Une erreur est survenue "
+                                           f"lors de l'ouverture de la fenêtre de configuration : {str(e)}")
 
-    def update_config(self, new_com_port, new_master_password):
-        # Mettre à jour la configuration avec le nouveau port COM et le nouveau mot de passe maître
-        self.cu48_communication.ser.port = new_com_port
+    def update_config(self, new_master_password):
+        # Mettre à jour la configuration avec le nouveau mot de passe maître
         self.locker_manager.master_password = new_master_password
 
     def toggle_locker(self, locker_number):
@@ -336,43 +402,61 @@ class LockerManagerGUI:
 
 
 class ConfigWindow:
-    def __init__(self, master, locker_manager_gui):
+    def __init__(self, master, locker_manager_gui, master_password_hash):
         self.master = master
         self.locker_manager_gui = locker_manager_gui
+        self.master_password_hash = master_password_hash
 
         # Création des widgets pour la fenêtre de configuration
-        self.password_label = tk.Label(master, text="Mot de passe:")
-        self.password_entry = tk.Entry(master, show="*")
-        self.com_port_label = tk.Label(master, text="Port COM:")
-        self.com_port_entry = tk.Entry(master)
+        self.master_password_label = tk.Label(master, text="Mot de passe maître:")
+        self.master_password_entry = tk.Entry(master, show="*")
+        self.confirm_new_master_password_label = tk.Label(master, text="Confirmer le nouveau mot de passe maître:")
+        self.confirm_new_master_password_entry = tk.Entry(master, show="*")
         self.new_master_password_label = tk.Label(master, text="Nouveau mot de passe maître:")
         self.new_master_password_entry = tk.Entry(master, show="*")
         self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config)
 
         # Placement des widgets dans la fenêtre
-        self.password_label.grid(row=0, column=0, padx=10, pady=5)
-        self.password_entry.grid(row=0, column=1, padx=10, pady=5)
-        self.com_port_label.grid(row=1, column=0, padx=10, pady=5)
-        self.com_port_entry.grid(row=1, column=1, padx=10, pady=5)
-        self.new_master_password_label.grid(row=2, column=0, padx=10, pady=5)
-        self.new_master_password_entry.grid(row=2, column=1, padx=10, pady=5)
-        self.save_button.grid(row=3, columnspan=2, padx=10, pady=5)
+        self.master_password_label.grid(row=0, column=0, padx=10, pady=5)
+        self.master_password_entry.grid(row=0, column=1, padx=10, pady=5)
+        self.new_master_password_label.grid(row=1, column=0, padx=10, pady=5)
+        self.new_master_password_entry.grid(row=1, column=1, padx=10, pady=5)
+        self.confirm_new_master_password_label.grid(row=2, column=0, padx=10, pady=5)
+        self.confirm_new_master_password_entry.grid(row=2, column=1, padx=10, pady=5)
+        self.save_button.grid(row=4, columnspan=2, padx=10, pady=5)
 
     def save_config(self):
-        # Vérifier si le mot de passe est correct
-        if self.password_entry.get() == "88888888":
-            # Mettre à jour le port COM et le mot de passe maître
-            new_com_port = self.com_port_entry.get()
+        # Récupérer le mot de passe maître entré par l'utilisateur
+        entered_master_password = self.master_password_entry.get()
+
+        # Vérifier si le mot de passe maître actuel est correct
+        entered_master_password_hash = hashlib.sha256(entered_master_password.encode()).hexdigest()
+        if entered_master_password_hash == self.master_password_hash:
+            # Récupérer le nouveau mot de passe maître et sa confirmation
             new_master_password = self.new_master_password_entry.get()
+            confirm_new_master_password = self.confirm_new_master_password_entry.get()
+            # Vérifier si le nouveau mot de passe maître respecte les conditions (4 à 8 chiffres)
+            if new_master_password.isdigit() and 4 <= len(new_master_password) <= 8:
 
-            # Mettre à jour la configuration dans l'application principale
-            self.locker_manager_gui.update_config(new_com_port, new_master_password)
+                # Vérifier si les deux mots de passe correspondent
+                if new_master_password == confirm_new_master_password:
+                    # Hasher le nouveau mot de passe maître
+                    new_master_password_hash = hashlib.sha256(new_master_password.encode()).hexdigest()
 
-            # Fermer la fenêtre de configuration
-            self.master.destroy()
+                    # Mettre à jour la configuration dans l'application principale
+                    self.locker_manager_gui.update_config(new_master_password_hash)
+
+                    # Mettre à jour le mot de passe maître dans la base de données
+                    self.locker_manager_gui.db_manager.update_master_password(new_master_password_hash)
+
+                    # Fermer la fenêtre de configuration
+                    self.master.destroy()
+                else:
+                    messagebox.showerror("Erreur", "Les mots de passe ne correspondent pas.")
+            else:
+                messagebox.showerror("Erreur", "Le nouveau mot de passe maître doit contenir entre 4 et 8 chiffres.")
         else:
-            # Afficher un message d'erreur si le mot de passe est incorrect
-            messagebox.showerror("Erreur", "Mot de passe incorrect")
+            messagebox.showerror("Erreur", "Mot de passe maître incorrect")
 
 
 # Exemple d'utilisation
@@ -382,10 +466,13 @@ root = tk.Tk()
 root.title("Gestion des Casiers")
 root.configure(background="white")  # couleur de fond
 
+# Créez une instance de DatabaseManager
+db_manager = DatabaseManager('data/database.db')
+
 # Créer une instance de CU48Communication avant de créer LockerManagerGUI
-cu48 = CU48Communication('com3', status_label=None)  # Remplacer 'com3' par le port approprié
+cu48 = CU48Communication(status_label=None)
 
 # Créer une instance de LockerManagerGUI en passant cu48 comme argument
-app = LockerManagerGUI(root, num_lockers, cu48, 'data/database.db')
+app = LockerManagerGUI(root, num_lockers, cu48)
 
 root.mainloop()
