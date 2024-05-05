@@ -26,7 +26,8 @@ Pour configurer le programme, vous pouvez accéder au menu "Options" et sélecti
 **Note**: Assurez-vous de ne pas oublier le mot de passe maître, car il est nécessaire pour accéder à la configuration et modifier les paramètres du programme.
 
 ---
-
+[Specification du CU48](/Datasheet/KR-CU48.pdf)
+[Specification des serrures](/Datasheet/KR-S99N.pdf)
 Pour toute question ou assistance supplémentaire, n'hésitez pas à me le faire savoir !
 
 ## Author
