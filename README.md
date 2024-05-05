@@ -34,7 +34,6 @@ Pour toute question ou assistance supplémentaire, n'hésitez pas à me le faire
 👤 **Stephane April**
 
 * Github: [@boudha25](https://github.com/boudha25)
-* LinkedIn: [@Stephane April](www.linkedin.com/in/stephane-april-4871b3297)
 
 ## Show your support
 
