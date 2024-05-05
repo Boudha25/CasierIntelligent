@@ -27,7 +27,7 @@ Pour configurer le programme, vous pouvez accéder au menu "Options" et sélecti
 
 ---
 [Specification du CU48](/Datasheet/KR-CU48.pdf)  
-[Specification des serrures](/Datasheet/KR-S99N.pdf)
+[Specification des serrures](/Datasheet/KR-S99N.pdf)  
 Pour toute question ou assistance supplémentaire, n'hésitez pas à me le faire savoir !
 
 ## Author
