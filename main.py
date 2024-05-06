@@ -247,9 +247,7 @@ class CU48Communication:
             checksum = sum(command) & 0xFF
             command.append(checksum)
             self.ser.write(command)
-            print("addr:", addr, "locker:", locker, "cmd:", cmd)
-            print("command:", command)
-            print("Commande envoyée en hexadécimal:", command.hex())
+            print("addr:", addr, "locker:", locker + 1, "cmd:", cmd)
         except serial.SerialException as e:
             print("Erreur lors de l'envoi de la commande série:", e)
 
@@ -321,10 +319,13 @@ class LockerManagerGUI:
 
         # Créer un menu cascade pour les options.
         options_menu = Menu(menubar, tearoff=0)
+        aide_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Options", menu=options_menu)
+        menubar.add_cascade(label="Aide", menu=aide_menu)
 
         # Ajouter les options de configuration au menu cascade.
-        options_menu.add_command(label="Configurer", command=self.open_config_window)
+        options_menu.add_command(label="Configurer", command=self.open_config_window, font=("Arial", 14))
+        aide_menu.add_command(label="Instructions", command=self.open_help_window, font=("Arial", 14))
 
         # Associer la barre de menu à la fenêtre principale.
         master.config(menu=menubar)
@@ -336,11 +337,11 @@ class LockerManagerGUI:
             master_password = self.locker_manager.db_manager.get_master_password()
             if master_password is not None:
                 # Créer et afficher la fenêtre de configuration.
-                config_window = tk.Toplevel(self.master)
+                config_window = ctk.CTkToplevel(self.master)
                 config_window.title("Configuration")
                 config_window.geometry("500x250")
                 config_window.resizable(False, False)
-                config_window.attributes("-topmost", True)  # Mettre la fenêtre au premier plan.
+                config_window.state('normal')  # Mettre la fenêtre au premier plan.
 
                 config_window.grab_set()  # Empêcher l'accès à la fenêtre principale.
 
@@ -351,6 +352,37 @@ class LockerManagerGUI:
         except Exception as e:
             messagebox.showerror("Erreur", f"Une erreur est survenue "
                                            f"lors de l'ouverture de la fenêtre de configuration : {str(e)}")
+
+    def open_help_window(self):
+        """Ouvre une fenêtre d'aide affichant les instructions pour ouvrir et fermer un casier."""
+        help_text = ("Pour ouvrir un casier : \n"
+                     "1. À l'aide du pavé numérique, saisissez un mot de passe de 4 à 8 chiffres.\n"
+                     "2. Sélectionnez le casier que vous souhaitez ouvrir.\n"
+                     "3. Le casier s'ouvrira automatiquement.\n\n"
+                     "Pour déverrouiller un casier : \n"
+                     "4. Saisissez le mot de passe utilisateur que vous avez choisi à l'étape 1.\n"
+                     "5. Cliquez sur le casier que vous avez verrouillé.\n")
+
+        # Créer une nouvelle fenêtre pour afficher l'aide.
+        help_window = ctk.CTkToplevel(self.master)
+        help_window.title("Aide")
+        help_window.geometry("700x300")
+        help_window.state('normal')
+
+        help_window.grab_set()  # Empêcher l'accès à la fenêtre principale.
+
+        # Ajouter un label avec le texte d'aide.
+        help_label = ctk.CTkLabel(help_window, text=help_text, justify="left")
+        help_label.cget("font").configure(size=20)
+        help_label.pack()
+
+        # Ajouter un bouton "Fermer" pour fermer la fenêtre d'aide.
+        close_button = ctk.CTkButton(help_window, text="Fermer", command=lambda: self.close_help_window(help_window))
+        close_button.pack()
+
+    def close_help_window(self, window):
+        """Ferme la fenêtre d'aide."""
+        window.destroy()
 
     def update_config(self, new_master_password):
         """Met à jour la configuration avec le nouveau mot de passe maître."""
@@ -363,6 +395,7 @@ class LockerManagerGUI:
         password = self.current_password.get()
 
         if isinstance(is_locked, bool):
+            """vérifie si is_locked est de type booléen."""
             if is_locked:
                 # Déverrouille le casier.
                 message = self.locker_manager.unlock_locker(locker_number, password)
@@ -465,13 +498,13 @@ class ConfigWindow:
         self.master_password_hash = master_password_hash
 
         # Création des widgets pour la fenêtre de configuration.
-        self.master_password_label = tk.Label(master, text="Mot de passe maître:")
+        self.master_password_label = tk.Label(master, text="Mot de passe maître:", font=("Arial", 14))
         self.master_password_entry = tk.Entry(master, show="*")
-        self.confirm_new_master_password_label = tk.Label(master, text="Confirmer le nouveau mot de passe maître:")
+        self.confirm_new_master_password_label = tk.Label(master, text="Confirmer le nouveau mot de passe maître:", font=("Arial", 14))
         self.confirm_new_master_password_entry = tk.Entry(master, show="*")
-        self.new_master_password_label = tk.Label(master, text="Nouveau mot de passe maître:")
+        self.new_master_password_label = tk.Label(master, text="Nouveau mot de passe maître:", font=("Arial", 14))
         self.new_master_password_entry = tk.Entry(master, show="*")
-        self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config)
+        self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config, font=("Arial", 14))
 
         # Placement des widgets dans la fenêtre.
         self.master_password_label.grid(row=0, column=0, padx=10, pady=5)
@@ -521,7 +554,7 @@ class ConfigWindow:
 num_lockers = 48
 
 # Crée une instance principale de l'interface graphique Tkinter.
-root = tk.Tk()
+root = ctk.CTk()
 root.title("Gestion des Casiers")
 root.configure(background="white")  # couleur de fond
 
@@ -537,5 +570,6 @@ cu48 = CU48Communication(status_label=None)
 # - num_lockers : le nombre de casiers.
 # - cu48 : l'instance de CU48Communication pour la communication avec le CU48.
 app = LockerManagerGUI(root, num_lockers, cu48)
+
 # Lance la boucle principale de l'interface graphique Tkinter, qui gère les événements et les interactions utilisateur.
 root.mainloop()
