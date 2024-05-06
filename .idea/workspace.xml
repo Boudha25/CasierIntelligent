@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Ajout de conditions try except pour renforcer le code et sécurisation du mot de passe maitre.">
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/database.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
@@ -27,18 +27,26 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="customtkinter" />
+        <entry key="$PROJECT_DIR$" value="CommunicationRS485" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;Boudha25&quot;
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "history": [
+    {
+      "searchQuery": "boudha25",
+      "state": "OPEN",
+      "assignee": "Boudha25"
+    }
+  ],
+  "lastFilter": {
+    "searchQuery": "boudha25",
+    "state": "OPEN",
+    "assignee": "Boudha25"
   }
-}</component>
+}]]></component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Boudha25/CasierIntelligent.git&quot;,
@@ -67,7 +75,7 @@
     "Python.CU48.executor": "Run",
     "Python.main.executor": "Run",
     "Python.test_locker_manager.executor": "Run",
-    "git-widget-placeholder": "#4 on CommunicationRS485",
+    "git-widget-placeholder": "MultiCU48",
     "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/Bibliotheque/venv",
     "settings.editor.selected.configurable": "settings.json.schema.catalog"
   }
@@ -270,7 +278,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714615546879</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48.">
+      <option name="closed" value="true" />
+      <created>1714964426611</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1714964426611</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -330,6 +346,7 @@
     <MESSAGE value="Communication unidirectionnelle, du logiciel vers le CU48 pour le déverrouillage." />
     <MESSAGE value="Ajout d'une base de donnée pour enregistrer l'état et les mot de passes des casiers en cas de panne de courant." />
     <MESSAGE value="Ajout de conditions try except pour renforcer le code et sécurisation du mot de passe maitre." />
-    <option name="LAST_COMMIT_MESSAGE" value="Ajout de conditions try except pour renforcer le code et sécurisation du mot de passe maitre." />
+    <MESSAGE value="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48." />
+    <option name="LAST_COMMIT_MESSAGE" value="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48." />
   </component>
 </project>
