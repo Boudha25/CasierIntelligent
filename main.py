@@ -36,11 +36,13 @@ class Locker:
             return f"Le casier {self.locker_number} est déjà déverrouillé."
         elif hashlib.sha256(password.encode()).hexdigest() == self.database_manager.get_master_password():
             # Si le mot de passe est le mot de passe maître, déverrouiller le casier
+            print("déverrouillé par le mot de passe maitre.")
             self.locked = False
             self.database_manager.update_locker_state(self.locker_number, False)
             return f"Casier {self.locker_number} est déverrouillé."
         elif hashlib.sha256(password.encode()).hexdigest() == self.password:
             # Si le mot de passe correspond au mot de passe stocké dans le casier, déverrouiller le casier
+            print("déverrouillé par le mot de passe régulier.")
             self.locked = False
             self.database_manager.update_locker_state(self.locker_number, False)
             return f"Casier {self.locker_number} est déverrouillé."
@@ -245,6 +247,8 @@ class CU48Communication:
             checksum = sum(command) & 0xFF
             command.append(checksum)
             self.ser.write(command)
+            print("addr:", addr, "locker:", locker, "cmd:", cmd)
+            print("command:", command)
             print("Commande envoyée en hexadécimal:", command.hex())
         except serial.SerialException as e:
             print("Erreur lors de l'envoi de la commande série:", e)
@@ -366,7 +370,8 @@ class LockerManagerGUI:
                     self.update_locker_button(locker_number)
                     self.update_status(message)
                     # Envoyer la commande pour déverrouiller le casier.
-                    self.cu48_communication.send_command(0x00, locker_number - 1, 0x51)
+                    cu48_address = self.get_cu48_address(locker_number)
+                    self.cu48_communication.send_command(cu48_address, locker_number - 1, 0x51)
                 else:
                     self.update_status(message)
             else:
@@ -376,7 +381,8 @@ class LockerManagerGUI:
                     self.update_locker_button(locker_number)
                     self.update_status(message)
                     # Envoyer la commande pour verrouiller le casier.
-                    self.cu48_communication.send_command(0x00, locker_number - 1, 0x51)
+                    cu48_address = self.get_cu48_address(locker_number)
+                    self.cu48_communication.send_command(cu48_address, locker_number - 1, 0x51)
                 else:
                     self.update_status(message)
         else:
@@ -387,6 +393,16 @@ class LockerManagerGUI:
         self.clear_password()
         # Effacer le statut après 30 secondes.
         self.master.after(30000, self.clear_status)
+
+    @staticmethod
+    def get_cu48_address(locker_number):
+        """Retourne l'adresse du CU48 en fonction du numéro de casier."""
+        if 1 <= locker_number <= 24:
+            return 0x00
+        elif 25 <= locker_number <= 48:
+            return 0x01
+        else:
+            return 0x02
 
     def update_locker_button(self, locker_number):
         """Met à jour l'apparence du bouton du casier pour refléter son état."""

@@ -27,18 +27,26 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="customtkinter" />
+        <entry key="$PROJECT_DIR$" value="CommunicationRS485" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;Boudha25&quot;
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "history": [
+    {
+      "searchQuery": "boudha25",
+      "state": "OPEN",
+      "assignee": "Boudha25"
+    }
+  ],
+  "lastFilter": {
+    "searchQuery": "boudha25",
+    "state": "OPEN",
+    "assignee": "Boudha25"
   }
-}</component>
+}]]></component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Boudha25/CasierIntelligent.git&quot;,
@@ -67,7 +75,7 @@
     "Python.CU48.executor": "Run",
     "Python.main.executor": "Run",
     "Python.test_locker_manager.executor": "Run",
-    "git-widget-placeholder": "#4 on CommunicationRS485",
+    "git-widget-placeholder": "MultiCU48",
     "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/Bibliotheque/venv",
     "settings.editor.selected.configurable": "settings.json.schema.catalog"
   }
