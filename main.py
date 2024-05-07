@@ -215,7 +215,7 @@ class DatabaseManager:
 
 
 class CU48Communication:
-    def __init__(self, port='com3', baudrate=19200, status_label=None):
+    def __init__(self, port='com1', baudrate=19200, status_label=None):
         """Initialise une communication série pour communiquer avec le CU48."""
         print("Port série utilisé:", port)  # Affiche la valeur du port série.
         try:
@@ -380,7 +380,8 @@ class LockerManagerGUI:
         close_button = ctk.CTkButton(help_window, text="Fermer", command=lambda: self.close_help_window(help_window))
         close_button.pack()
 
-    def close_help_window(self, window):
+    @staticmethod
+    def close_help_window(window):
         """Ferme la fenêtre d'aide."""
         window.destroy()
 
@@ -403,8 +404,9 @@ class LockerManagerGUI:
                     self.update_locker_button(locker_number)
                     self.update_status(message)
                     # Envoyer la commande pour déverrouiller le casier.
-                    cu48_address = self.get_cu48_address(locker_number)
-                    self.cu48_communication.send_command(cu48_address, locker_number - 1, 0x51)
+                    # Envoyer la commande pour verrouiller ou déverrouiller le casier.
+                    cu48_address, locker_index = self.get_cu48_address(locker_number)
+                    self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
                 else:
                     self.update_status(message)
             else:
@@ -413,9 +415,9 @@ class LockerManagerGUI:
                 if message.startswith("Casier"):
                     self.update_locker_button(locker_number)
                     self.update_status(message)
-                    # Envoyer la commande pour verrouiller le casier.
-                    cu48_address = self.get_cu48_address(locker_number)
-                    self.cu48_communication.send_command(cu48_address, locker_number - 1, 0x51)
+                    # Envoyer la commande pour verrouiller ou déverrouiller le casier.
+                    cu48_address, locker_index = self.get_cu48_address(locker_number)
+                    self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
                 else:
                     self.update_status(message)
         else:
@@ -429,13 +431,13 @@ class LockerManagerGUI:
 
     @staticmethod
     def get_cu48_address(locker_number):
-        """Retourne l'adresse du CU48 en fonction du numéro de casier."""
+        """Retourne l'adresse du CU48 et l'emplacement de branchement du casier en fonction de son numéro."""
         if 1 <= locker_number <= 24:
-            return 0x00
+            return 0x00, locker_number -1
         elif 25 <= locker_number <= 48:
-            return 0x01
+            return 0x01, locker_number - 25
         else:
-            return 0x02
+            return 0x02, locker_number - 49
 
     def update_locker_button(self, locker_number):
         """Met à jour l'apparence du bouton du casier pour refléter son état."""
@@ -500,7 +502,8 @@ class ConfigWindow:
         # Création des widgets pour la fenêtre de configuration.
         self.master_password_label = tk.Label(master, text="Mot de passe maître:", font=("Arial", 14))
         self.master_password_entry = tk.Entry(master, show="*")
-        self.confirm_new_master_password_label = tk.Label(master, text="Confirmer le nouveau mot de passe maître:", font=("Arial", 14))
+        self.confirm_new_master_password_label = tk.Label(master, text="Confirmer le nouveau mot de passe maître:",
+                                                          font=("Arial", 14))
         self.confirm_new_master_password_entry = tk.Entry(master, show="*")
         self.new_master_password_label = tk.Label(master, text="Nouveau mot de passe maître:", font=("Arial", 14))
         self.new_master_password_entry = tk.Entry(master, show="*")

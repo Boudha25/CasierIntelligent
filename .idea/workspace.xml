@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48.">
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/database.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
@@ -13,6 +13,11 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints>
+      <file url="file://$PROJECT_DIR$/main.py" />
+    </disable_hints>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -33,20 +38,16 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "history": [
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;history&quot;: [
     {
-      "searchQuery": "boudha25",
-      "state": "OPEN",
-      "assignee": "Boudha25"
+      &quot;searchQuery&quot;: &quot;boudha25&quot;,
+      &quot;state&quot;: &quot;OPEN&quot;,
+      &quot;assignee&quot;: &quot;Boudha25&quot;
     }
   ],
-  "lastFilter": {
-    "searchQuery": "boudha25",
-    "state": "OPEN",
-    "assignee": "Boudha25"
-  }
-}]]></component>
+  &quot;lastFilter&quot;: {}
+}</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Boudha25/CasierIntelligent.git&quot;,
@@ -57,7 +58,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
@@ -68,18 +69,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python tests.Python tests in test_locker_manager.py.executor": "Run",
-    "Python.CU48.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.test_locker_manager.executor": "Run",
-    "git-widget-placeholder": "MultiCU48",
-    "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/Bibliotheque/venv",
-    "settings.editor.selected.configurable": "settings.json.schema.catalog"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests in test_locker_manager.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.CU48.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_locker_manager.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;MultiCU48&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/Bibliotheque/venv&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.json.schema.catalog&quot;
   }
-}]]></component>
+}</component>
+  <component name="QodanaReportsService">
+    <option name="descriptions">
+      <ReportDescription localRun="true" path="C:\Users\Utilisateur\AppData\Local\Temp\qodana_output\qodana.sarif.json" reportGuid="c7e9fdb6-469b-4b97-aef8-d6cf01e03610" reportId="main.py/qodana/2024-05-06" />
+    </option>
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Utilisateur\Google Drive\Documents de Stéphane\Projet\Python\Bibliotheque\venv" />
@@ -286,7 +293,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714964426611</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel.">
+      <option name="closed" value="true" />
+      <created>1714998459097</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1714998459097</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -347,6 +362,7 @@
     <MESSAGE value="Ajout d'une base de donnée pour enregistrer l'état et les mot de passes des casiers en cas de panne de courant." />
     <MESSAGE value="Ajout de conditions try except pour renforcer le code et sécurisation du mot de passe maitre." />
     <MESSAGE value="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48." />
-    <option name="LAST_COMMIT_MESSAGE" value="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48." />
+    <MESSAGE value="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel." />
+    <option name="LAST_COMMIT_MESSAGE" value="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel." />
   </component>
 </project>
