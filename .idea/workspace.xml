@@ -29,6 +29,13 @@
     <option name="NEW_BASE" value="EnvoieSMS" />
   </component>
   <component name="Git.Settings">
+    <option name="PREVIEW_PUSH_PROTECTED_ONLY" value="true" />
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--follow-tags" />
+        <option name="title" value="Current Branch" />
+      </GitPushTagMode>
+    </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$" value="EnvoieSMS" />
@@ -69,19 +76,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python tests.Python tests in test_locker_manager.py.executor": "Run",
-    "Python.CU48.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.test_locker_manager.executor": "Run",
-    "git-widget-placeholder": "EnvoieSMS",
-    "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/Bibliotheque/venv",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "settings.json.schema.catalog"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests in test_locker_manager.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.CU48.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_locker_manager.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;EnvoieSMS&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/Bibliotheque/venv&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.json.schema.catalog&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Utilisateur\Google Drive\Documents de Stéphane\Projet\Python\Bibliotheque\venv" />
@@ -328,7 +335,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715308825184</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
+      <option name="closed" value="true" />
+      <created>1715309852215</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1715309852215</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
