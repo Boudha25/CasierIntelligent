@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
-      <change beforePath="$PROJECT_DIR$/data/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/database.db" afterDir="false" />
-    </list>
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -34,6 +32,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -310,7 +309,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715308158286</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
+      <option name="closed" value="true" />
+      <created>1715308493457</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1715308493457</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
