@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel.">
-      <change afterPath="$PROJECT_DIR$/Database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
       <change beforePath="$PROJECT_DIR$/data/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/database.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -305,7 +302,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715125521139</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
+      <option name="closed" value="true" />
+      <created>1715308158286</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1715308158286</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -367,6 +372,7 @@
     <MESSAGE value="Ajout de conditions try except pour renforcer le code et sécurisation du mot de passe maitre." />
     <MESSAGE value="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48." />
     <MESSAGE value="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel." />
-    <option name="LAST_COMMIT_MESSAGE" value="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel." />
+    <MESSAGE value=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py." />
+    <option name="LAST_COMMIT_MESSAGE" value=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py." />
   </component>
 </project>
