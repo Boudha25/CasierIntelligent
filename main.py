@@ -6,6 +6,8 @@ from tkinter import Menu, messagebox
 import customtkinter as ctk  # Importer customTkinter au lieu de tkinter
 import serial
 from twilio.rest import Client
+import os
+from dotenv import load_dotenv
 
 
 class Locker:
@@ -490,8 +492,12 @@ class LockerManagerGUI:
                     # le SMS avec le mot de passe.
                     # Vous pouvez utiliser des bibliothèques Python comme
                     # Twilio pour envoyer des SMS
-                    account_sid = 'AC75a353f8dd343e010251fe677a0a26e2'
-                    auth_token = 'b0c25f6918dd7fa36150236038e5c9f9'
+                    # Charger les variables d'environnement du fichier .env
+                    load_dotenv()
+                    # Utiliser les secrets du fichier secret.env.
+                    account_sid = os.getenv('ACCOUNT_SID')
+                    auth_token = os.getenv('AUTH_TOKEN')
+
                     client = Client(account_sid, auth_token)
 
                     if current_password.strip() != "":
