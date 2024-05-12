@@ -493,7 +493,7 @@ class LockerManagerGUI:
                     # Vous pouvez utiliser des bibliothèques Python comme
                     # Twilio pour envoyer des SMS
                     # Charger les variables d'environnement du fichier .env
-                    load_dotenv()
+                    load_dotenv(dotenv_path='secret.env')
                     # Utiliser les secrets du fichier secret.env.
                     account_sid = os.getenv('ACCOUNT_SID')
                     auth_token = os.getenv('AUTH_TOKEN')
@@ -502,7 +502,7 @@ class LockerManagerGUI:
 
                     if current_password.strip() != "":
                         message = client.messages.create(
-                            from_='+12512577753',
+                            from_='+15818905458',
                             to='+1' + phone_number,
                             body=f"Votre mot de passe est : {current_password}"
                         )

@@ -368,7 +368,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715309884457</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
+      <option name="closed" value="true" />
+      <created>1715459706672</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1715459706672</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
