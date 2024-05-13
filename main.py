@@ -520,6 +520,11 @@ class LockerManagerGUI:
         self.phone_number_entry.insert(0, formatted_number)
 
 
+# Fonction à exécuter pour quitter l'application
+def quitter_application(_event=None):
+    root.destroy()
+
+
 # Donne le nombre de casiers à créer.
 num_lockers = 48
 
@@ -527,6 +532,17 @@ num_lockers = 48
 root = ctk.CTk()
 root.title("Gestion des Casiers")
 root.configure(background="white")  # couleur de fond
+# Définition de la résolution de l'écran
+largeur_screen = root.winfo_screenwidth()
+hauteur_screen = root.winfo_screenheight()
+# Définition des dimensions de la fenêtre
+root.geometry(f"{largeur_screen}x{hauteur_screen}")
+print("Écran", largeur_screen, hauteur_screen)
+# Affichage de la fenêtre en plein écran.
+root.attributes("-fullscreen", True)  # Enlève le X pour pouvoir fermer la fenêtre.
+# Lier la touche "<Echap>" pour quitter l'application.
+root.bind("<Escape>", quitter_application)
+
 
 # Crée une instance de DatabaseManager pour gérer la base de données.
 db_manager = DatabaseManager('data/database.db')

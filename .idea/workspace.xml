@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Séparation du code en fichier.">
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Séparation et création du fichier Cu48Communication.py. Prêt à être livré.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/database.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -93,19 +92,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python tests.Python tests in test_locker_manager.py.executor": "Run",
-    "Python.CU48.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.test_locker_manager.executor": "Run",
-    "git-widget-placeholder": "SéparationFichier",
-    "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/CasierIntelligent/.gitignore",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "settings.json.schema.catalog"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests in test_locker_manager.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.CU48.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_locker_manager.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;SéparationFichier&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/CasierIntelligent/.gitignore&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.json.schema.catalog&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Utilisateur\Google Drive\Documents de Stéphane\Projet\Python\Bibliotheque\venv" />
@@ -400,7 +399,31 @@
       <option name="project" value="LOCAL" />
       <updated>1715548667400</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Amélioration du positionnement des Widgets.">
+      <option name="closed" value="true" />
+      <created>1715603783427</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1715603783427</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Séparation et création du fichier Cu48Communication.py. Prêt à être livré.">
+      <option name="closed" value="true" />
+      <created>1715604051343</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1715604051343</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Séparation et création du fichier Cu48Communication.py. Prêt à être livré.">
+      <option name="closed" value="true" />
+      <created>1715620150330</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1715620150330</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -465,6 +488,8 @@
     <MESSAGE value=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py." />
     <MESSAGE value="Mot de passe par SMS fonctionne.  Les secrets sont dans le fichier secret.env qui est dans le .getignore.  Prêt à être livré." />
     <MESSAGE value="Séparation du code en fichier." />
-    <option name="LAST_COMMIT_MESSAGE" value="Séparation du code en fichier." />
+    <MESSAGE value="Amélioration du positionnement des Widgets." />
+    <MESSAGE value="Séparation et création du fichier Cu48Communication.py. Prêt à être livré." />
+    <option name="LAST_COMMIT_MESSAGE" value="Séparation et création du fichier Cu48Communication.py. Prêt à être livré." />
   </component>
 </project>
