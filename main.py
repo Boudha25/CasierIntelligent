@@ -1,11 +1,11 @@
 from Database import DatabaseManager
 from ConfigurationWindow import ConfigWindow
+from Cu48Communication import CU48Communication
 import hashlib
 import re
 import tkinter as tk
 from tkinter import Menu, messagebox
 import customtkinter as ctk  # Importer customTkinter au lieu de tkinter
-import serial
 from twilio.rest import Client
 import os
 from dotenv import load_dotenv
@@ -112,61 +112,6 @@ class LockerManager:
         self.db_manager.update_master_password(new_master_password_hash)
 
 
-class CU48Communication:
-    def __init__(self, port='com1', baudrate=19200, status_label=None):
-        """Initialise une communication série pour communiquer avec le CU48."""
-        print("Port série utilisé:", port)  # Affiche la valeur du port série.
-        try:
-            if port is not None:
-                self.ser = serial.Serial(port, baudrate, timeout=1)
-                self.status_label = status_label  # Ajouter le status_label comme attribut.
-            else:
-                raise ValueError("Aucun port spécifié.")
-
-        except (serial.SerialException, ValueError) as e:
-            print("Erreur lors de l'initialisation de CU48Communication:", e)
-
-    def __enter__(self):
-        """Permet l'utilisation de la classe avec le mot-clé 'with'."""
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        """Ferme la connexion série lors de la sortie d'un contexte 'with'."""
-        try:
-            self.ser.close()  # Fermer le port série
-        except Exception as e:
-            print("Erreur lors de la fermeture du port série:", e)
-
-    def send_command(self, addr, locker, cmd):
-        """Envoie une commande au CU48."""
-        #  addr est l'adresse hexadécimale du CU48.
-        try:
-            command = bytearray([0x02, addr, locker, cmd, 0x03])
-            checksum = sum(command) & 0xFF
-            command.append(checksum)
-            self.ser.write(command)
-            print("addr:", addr, "locker:", locker + 1, "cmd:", cmd)
-        except serial.SerialException as e:
-            print("Erreur lors de l'envoi de la commande série:", e)
-
-    def update_status(self, message):  # Affiche-les prints dans le status_label.
-        """Met à jour l'état dans le status_label s'il est disponible, sinon affiche le message dans la console."""
-        if self.status_label:
-            try:
-                self.status_label.configure(text=message)
-            except Exception as e:
-                print("Erreur lors de la mise à jour de l'état:", e)
-        else:
-            print(message)
-
-    def close(self):
-        """Ferme la connexion série."""
-        try:
-            self.ser.close()
-        except Exception as e:
-            print("Erreur lors de la fermeture du port série:", e)
-
-
 class LockerManagerGUI:
     def __init__(self, master, numb_lockers, cu48_communication=None):
         """Initialise l'interface graphique du gestionnaire de casiers."""
@@ -254,7 +199,7 @@ class LockerManagerGUI:
                                                                 "-Pour déverrouiller un casier : \n"
                                                                 "1. Saisissez le mot de passe utilisateur que vous "
                                                                 "avez choisi à l'étape 1.\n"
-                                                                "2. Cliquez sur le casier que vous avez verrouillé.\n\n",
+                                                                "2. Cliquez sur le casier que vous avez verrouillé.\n",
                                                    font=("Arial", 18), justify="left")
         self.instruction_line_label.grid(row=(numb_lockers - 1) // 5 + 4, column=4, columnspan=5, pady=0, sticky="nw")
 
