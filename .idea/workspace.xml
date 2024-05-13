@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Mot de passe par SMS fonctionne.  Les secrets sont dans le fichier secret.env qui est dans le .getignore.  Prêt à être livré.">
-      <change afterPath="$PROJECT_DIR$/ConfigurationWindow.py" afterDir="false" />
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Séparation du code en fichier.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/database.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
@@ -385,7 +384,23 @@
       <option name="project" value="LOCAL" />
       <updated>1715547383291</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Séparation du code en fichier.">
+      <option name="closed" value="true" />
+      <created>1715548627598</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1715548627598</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Séparation du code en fichier.">
+      <option name="closed" value="true" />
+      <created>1715548667400</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1715548667400</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -449,6 +464,7 @@
     <MESSAGE value="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel." />
     <MESSAGE value=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py." />
     <MESSAGE value="Mot de passe par SMS fonctionne.  Les secrets sont dans le fichier secret.env qui est dans le .getignore.  Prêt à être livré." />
-    <option name="LAST_COMMIT_MESSAGE" value="Mot de passe par SMS fonctionne.  Les secrets sont dans le fichier secret.env qui est dans le .getignore.  Prêt à être livré." />
+    <MESSAGE value="Séparation du code en fichier." />
+    <option name="LAST_COMMIT_MESSAGE" value="Séparation du code en fichier." />
   </component>
 </project>

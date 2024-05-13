@@ -1,0 +1,250 @@
+[33mcommit ef956480aab731fa807c55d8a5021ce9ef0c7e8e[m[33m ([m[1;36mHEAD -> [m[1;32mEnvoieSMS[m[33m)[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Thu May 9 22:58:04 2024 -0400
+
+     Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.
+
+[33mcommit 12febe76cc3602561b13166926e8c0bc54495fc8[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Thu May 9 22:48:45 2024 -0400
+
+     Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.
+
+[33mcommit afbe1d48af3afe95c3866d9e79c6af268f3d814c[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Thu May 9 22:40:17 2024 -0400
+
+     Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.
+
+[33mcommit ba747cbb645f0535316b79863a2284fb44549490[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Thu May 9 22:34:53 2024 -0400
+
+     Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.
+
+[33mcommit bd7600aa34af3967092f5fe32e2ac7ab1b6c83aa[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Thu May 9 22:29:14 2024 -0400
+
+     Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.
+
+[33mcommit 07c28ce9ba8472efc9cbd3aab800cc7743a9acbf[m[33m ([m[1;31morigin/customtkinter[m[33m, [m[1;31morigin/MultiCU48[m[33m, [m[1;32mcustomtkinter[m[33m, [m[1;32mMultiCU48[m[33m)[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Tue May 7 19:45:18 2024 -0400
+
+    Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel.
+
+[33mcommit 569342da142a7396f5e32ba851eb3aa338be28ac[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Mon May 6 08:27:36 2024 -0400
+
+    Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel.
+
+[33mcommit 03b3f5cc7d4ede19434faa7d4d4eea7d9d33fecf[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun May 5 23:00:23 2024 -0400
+
+    Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48.
+
+[33mcommit e0701515b51510b54da5ef8ea6ec74a480f32912[m[33m ([m[1;31morigin/CommunicationRS485[m[33m, [m[1;32mCommunicationRS485[m[33m)[m
+Merge: 0d05203 757ff49
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun May 5 17:14:55 2024 -0400
+
+    Merge remote-tracking branch 'origin/master' into CommunicationRS485
+    
+    # Conflicts:
+    #       .idea/workspace.xml
+
+[33mcommit 0d052032472975795294765616fa38365e3ed7ab[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun May 5 17:06:36 2024 -0400
+
+    Ajout de commentaires sous chaque classe et méthode.
+
+[33mcommit 757ff4905f6b4ccfc9b8432a68f7d2fd646696f9[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun May 5 17:01:46 2024 -0400
+
+    Delete .idea directory
+
+[33mcommit 2bd97e8750545e20ae9611f8fbdfe99f7e171d63[m
+Merge: a71cf59 97a526d
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun May 5 17:00:36 2024 -0400
+
+    Merge pull request #4 from Boudha25/CommunicationRS485
+    
+    Communication rs485
+
+[33mcommit c7efa608bfe0412d9fe2466ff1564d5a141ad58e[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun May 5 16:58:53 2024 -0400
+
+    Ajout de commentaires sous chaque classe et méthode.
+
+[33mcommit 97a526de58f940c8aa895421c7097f166bdec947[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun May 5 16:20:42 2024 -0400
+
+    Suppression de la possibilité de mettre à jour le port com et meilleure structure de la fenêtre Option.
+
+[33mcommit 224f0373f5cc6d6697f03660f20e7bca3933c488[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Wed May 1 22:05:37 2024 -0400
+
+    Ajout de conditions try except pour renforcer le code et sécurisation du mot de passe maitre.
+
+[33mcommit 6094c6ca8b803e2744c1e1bea835f516cae51645[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Wed May 1 22:04:19 2024 -0400
+
+    Ajout d'une base de donnée pour enregistrer l'état et les mot de passes des casiers en cas de panne de courant.
+
+[33mcommit 8827a4f8f71dd05605b42af446271a01aa77b2e1[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Mon Apr 29 23:13:54 2024 -0400
+
+    Ajout d'une base de donnée pour enregistrer l'état et les mot de passes des casiers en cas de panne de courant.
+
+[33mcommit a71cf5912c41e51a57c3ccdd61030046ca3a6f8d[m
+Merge: b0ba3e1 f44f527
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Mon Apr 29 23:13:23 2024 -0400
+
+    Merge pull request #3 from Boudha25/customtkinter
+    
+    Customtkinter
+
+[33mcommit ed427b1dd99e8eb4dda6d22ee37d70e1fe0c81fc[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Mon Apr 29 23:09:25 2024 -0400
+
+    Ajout d'une base de donnée pour enregistrer l'état et les mot de passes des casiers en cas de panne de courant.
+
+[33mcommit 1915c8647e57dbe3da20baf7e63257e58bafe1c5[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun Apr 28 16:54:08 2024 -0400
+
+    Communication unidirectionnelle, du logiciel vers le CU48 pour le déverrouillage.
+
+[33mcommit 117fdc8302ea95873252bd11a2f34280c555f7d0[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Thu Apr 25 20:53:08 2024 -0400
+
+    Ajout de communication lors du déverrouillage des serrures. Lors de ce commit, le déverrouillage des serrures fonctionne.
+
+[33mcommit 2243b535982e5a3515322dea97210d53cb0d9ebd[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun Apr 21 08:17:30 2024 -0400
+
+    Ajout de la méthode update_status dans la classe CU48Communication pour afficher les print dans le status_label.
+
+[33mcommit 4a2c36b3cc396f65bdfbd81aff09abe40beebbd0[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 20 07:41:01 2024 -0400
+
+    Ajout de la méthode def get_locker_status dans la classe CU48Communication.
+
+[33mcommit 851f9cbfd03461abbc6d5c147717327c06a15047[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Thu Apr 18 23:18:56 2024 -0400
+
+    Ajout de la classe CU48Communication.
+
+[33mcommit b0ba3e1d42921ef56ce39d278879047eef9e1fcc[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 13 17:35:15 2024 -0400
+
+    Delete .idea directory
+
+[33mcommit f44f5279bdcf935f418916d344c6da43a6b5913a[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 13 17:34:55 2024 -0400
+
+    Delete .idea directory
+
+[33mcommit f96b0fca1b47216fd6b71b5d28e84265ed0e8061[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 13 17:34:38 2024 -0400
+
+    Delete cu48-protocol-and-introduction-v2.1.doc
+
+[33mcommit 8843b13f44da07a9ccd91947c76a4759b2810d7f[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 13 17:34:15 2024 -0400
+
+    Delete casier.ico
+
+[33mcommit c7ecef4d00c73aff8d65ec5608b8d366a470d94a[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 13 17:28:54 2024 -0400
+
+    Amélioration majeure de l'apparence à l'aide de CustomTkinter.
+
+[33mcommit 6b0c3069c2051adfe58552d2bbc54fecd0d1aef4[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 13 17:27:40 2024 -0400
+
+    Amélioration majeure de l'apparence à l'aide de CustomTkinter.
+
+[33mcommit f0ae6b5b6d66f5f95d98266e5d8c0df4922e0522[m
+Merge: e7620dd da88c32
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 13 10:11:02 2024 -0400
+
+    Merge pull request #2 from Boudha25/customtkinter
+    
+    Correction de nom de variable num_lockers pour numb_lockers
+
+[33mcommit e0c3f9739157e314a6e917ae55108aa81fb772ce[m
+Merge: da88c32 e7620dd
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 13 10:08:18 2024 -0400
+
+    Merge remote-tracking branch 'origin/master' into customtkinter
+
+[33mcommit da88c3250ace8e0cdfc4a3a594370cd9a5ef5a4d[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 13 10:07:00 2024 -0400
+
+    Correction de nom de variable num_lockers pour numb_lockers
+
+[33mcommit e7620ddd2301f82374d7f03cbe74e2d4a375ba48[m
+Merge: 59ad2f6 8db0a40
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Tue Apr 9 19:22:23 2024 -0400
+
+    Merge pull request #1 from Boudha25/customtkinter
+    
+    Ajour d'un mot de passe maitre.
+
+[33mcommit 8db0a40607ab154412974f341b233eb525b027e3[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Tue Apr 9 19:21:33 2024 -0400
+
+    Ajour d'un mot de passe maitre.
+
+[33mcommit 59ad2f65de472a46fb855c17a0fbc926e46a365a[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun Apr 7 12:43:21 2024 -0400
+
+    Maintenant, le curseur se place automatiquement à la fin du champ de mot de passe à chaque saisie, et le focus reste dans le champ de mot de passe pour faciliter la saisie.
+
+[33mcommit 807eb93d8b475bcacba0c087034bf58ad1a885f4[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun Apr 7 11:48:36 2024 -0400
+
+    Changement de couleur de fond des boutons
+
+[33mcommit f351ec458a2484a7f63ad0b2a6519d40c66ebd09[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sun Apr 7 11:12:21 2024 -0400
+
+    Premier commit
+
+[33mcommit 12cb9a65bba532ae45a7425e21b1cbb32e89b76a[m
+Author: Stephane <143884421+Boudha25@users.noreply.github.com>
+Date:   Sat Apr 6 16:08:08 2024 -0400
+
+    Premier commit
