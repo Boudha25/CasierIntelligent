@@ -5,6 +5,8 @@ class CU48Communication:
     def __init__(self, port='com1', baudrate=19200, status_label=None):
         """Initialise une communication série pour communiquer avec le CU48."""
         print("Port série utilisé:", port)  # Affiche la valeur du port série.
+        self.ser = None  # Initialiser self.ser à None par défaut
+        self.status_label = status_label  # Ajouter le status_label comme attribut.
         try:
             if port is not None:
                 self.ser = serial.Serial(port, baudrate, timeout=1)
@@ -29,6 +31,9 @@ class CU48Communication:
     def send_command(self, addr, locker, cmd):
         """Envoie une commande au CU48."""
         #  addr est l'adresse hexadécimale du CU48.
+        if self.ser is None:
+            print("Erreur: Port série non initialisé.")
+            return
         try:
             command = bytearray([0x02, addr, locker, cmd, 0x03])
             checksum = sum(command) & 0xFF
@@ -50,7 +55,8 @@ class CU48Communication:
 
     def close(self):
         """Ferme la connexion série."""
-        try:
-            self.ser.close()
-        except Exception as e:
-            print("Erreur lors de la fermeture du port série:", e)
+        if self.ser is not None:
+            try:
+                self.ser.close()
+            except Exception as e:
+                print("Erreur lors de la fermeture du port série:", e)

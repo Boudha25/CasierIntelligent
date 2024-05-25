@@ -1,5 +1,11 @@
+# -*- coding: utf-8 -*-
+# -*- coding: latin-1 -*-
+##############################
+#   Auteur: Stéphane April   #
+#   Mai 2024 ver.1    #
+##############################
 from Database import DatabaseManager
-from ConfigurationWindow import ConfigWindow
+from ConfigurationWindow import ConfigWindow, read_config_file, write_config_file
 from Cu48Communication import CU48Communication
 import hashlib
 import re
@@ -123,6 +129,11 @@ class LockerManagerGUI:
         self.locker_buttons = []  # Initialiser la liste locker_buttons.
         self.db_manager = db_manager
         self.cu48 = None
+        self.config_file_path = config_file_path
+
+        # Lire la configuration
+        self.config = read_config_file(config_file_path)
+        self.cu48_ranges = self.config["cu48_ranges"]
 
         # Configuration des lignes de la grille. Ajustement automatique.
         for i in range(numb_lockers):
@@ -245,14 +256,14 @@ class LockerManagerGUI:
                 # Créer et afficher la fenêtre de configuration.
                 config_window = ctk.CTkToplevel(self.master)
                 config_window.title("Configuration")
-                config_window.geometry("500x250")
+                config_window.geometry("600x300")
                 config_window.resizable(False, False)
                 config_window.state('normal')  # Mettre la fenêtre au premier plan.
 
                 config_window.grab_set()  # Empêcher l'accès à la fenêtre principale.
 
                 # Passer l'instance de LockerManagerGUI à la fenêtre de configuration.
-                ConfigWindow(config_window, self, master_password)
+                ConfigWindow(config_window, self, master_password, config_file_path)
             else:
                 messagebox.showerror("Erreur", "Impossible de récupérer le mot de passe maître.")
         except Exception as e:
@@ -341,15 +352,22 @@ class LockerManagerGUI:
         # Effacer le statut après 30 secondes.
         self.master.after(30000, self.clear_status)
 
-    @staticmethod
-    def get_cu48_address(locker_number):
+    def update_cu48_ranges(self, address1_range, address2_range, address3_range):
+        """Met à jour les plages d'adresses CU48."""
+        self.cu48_ranges[0] = address1_range
+        self.cu48_ranges[1] = address2_range
+        self.cu48_ranges[2] = address3_range
+
+        # Sauvegarder la configuration mise à jour
+        self.config["cu48_ranges"] = [address1_range, address2_range, address3_range]
+        write_config_file(self.config_file_path, self.config)
+
+    def get_cu48_address(self, locker_number):
         """Retourne l'adresse du CU48 et l'emplacement de branchement du casier en fonction de son numéro."""
-        if 1 <= locker_number <= 24:
-            return 0x00, locker_number - 1
-        elif 25 <= locker_number <= 48:
-            return 0x01, locker_number - 25
-        else:
-            return 0x02, locker_number - 49
+        for index, (start, end) in enumerate(self.cu48_ranges):
+            if start <= locker_number <= end:
+                return index, locker_number - start
+        return None, None
 
     def update_locker_button(self, locker_number):
         """Met à jour l'apparence du bouton du casier pour refléter son état."""
@@ -527,6 +545,9 @@ def quitter_application(_event=None):
 
 # Donne le nombre de casiers à créer.
 num_lockers = 48
+
+#  Emplacement du fichier de configuration.
+config_file_path = "config.json"
 
 # Crée une instance principale de l'interface graphique Tkinter.
 root = ctk.CTk()
