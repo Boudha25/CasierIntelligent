@@ -11,7 +11,8 @@ def read_config_file(file_path):
             return json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         return {
-            "cu48_ranges": [(1, 24), (25, 48), (49, 72)]
+            "cu48_ranges": [(1, 24), (25, 48), (49, 72)],
+            "num_lockers": 48
         }
 
 
@@ -34,28 +35,35 @@ class ConfigWindow:
         self.cu48_ranges = self.config["cu48_ranges"]
 
         # Création des widgets pour la fenêtre de configuration.
-        self.master_password_label = tk.Label(master, text="Mot de passe maître:", font=("Arial", 14))
-        self.master_password_entry = tk.Entry(master, show="*")
+        self.master_password_label = tk.Label(master, text="Mot de passe maître:", font=("Arial", 36))
+        self.master_password_entry = tk.Entry(master, show="*", font=("Arial", 36))
         self.confirm_new_master_password_label = tk.Label(master, text="Confirmer le nouveau mot de passe maître:",
-                                                          font=("Arial", 14))
-        self.confirm_new_master_password_entry = tk.Entry(master, show="*")
-        self.new_master_password_label = tk.Label(master, text="Nouveau mot de passe maître:", font=("Arial", 14))
-        self.new_master_password_entry = tk.Entry(master, show="*")
-        self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config, font=("Arial", 14))
+                                                          font=("Arial", 36))
+        self.confirm_new_master_password_entry = tk.Entry(master, show="*", font=("Arial", 36))
+        self.new_master_password_label = tk.Label(master, text="Nouveau mot de passe maître:", font=("Arial", 36))
+        self.new_master_password_entry = tk.Entry(master, show="*", font=("Arial", 36))
+        self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config, font=("Arial", 36))
 
         # Création des widgets pour la configuration des adresses CU48.
-        self.cu48_label = tk.Label(master, text="Configuration des adresses CU48:", font=("Arial", 14, 'bold'))
-        self.address1_label = tk.Label(master, text="Adresse 0x00:", font=("Arial", 14))
-        self.address1_start_entry = tk.Entry(master)
-        self.address1_end_entry = tk.Entry(master)
+        self.num_lockers_label = tk.Label(master, text="Nombre total de casiers:", font=("Arial", 36))
+        self.num_lockers_entry = tk.Entry(master, font=("Arial", 36))
+        self.num_lockers_entry.insert(0, str(self.config.get("num_lockers", 48)))  # Valeur par défaut à 48
 
-        self.address2_label = tk.Label(master, text="Adresse 0x01:", font=("Arial", 14))
-        self.address2_start_entry = tk.Entry(master)
-        self.address2_end_entry = tk.Entry(master)
+        self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config, font=("Arial", 36))
 
-        self.address3_label = tk.Label(master, text="Adresse 0x02:", font=("Arial", 14))
-        self.address3_start_entry = tk.Entry(master)
-        self.address3_end_entry = tk.Entry(master)
+        self.cu48_label = tk.Label(master, text="Configuration des plages d'adresses par CU48:",
+                                   font=("Arial", 36, 'bold'))
+        self.address1_label = tk.Label(master, text="Adresse 0x00:", font=("Arial", 36))
+        self.address1_start_entry = tk.Entry(master, font=("Arial", 36))
+        self.address1_end_entry = tk.Entry(master, font=("Arial", 36))
+
+        self.address2_label = tk.Label(master, text="Adresse 0x01:", font=("Arial", 36))
+        self.address2_start_entry = tk.Entry(master, font=("Arial", 36))
+        self.address2_end_entry = tk.Entry(master, font=("Arial", 36))
+
+        self.address3_label = tk.Label(master, text="Adresse 0x02:", font=("Arial", 36))
+        self.address3_start_entry = tk.Entry(master, font=("Arial", 36))
+        self.address3_end_entry = tk.Entry(master, font=("Arial", 36))
 
         # Remplir les champs de saisie avec les plages actuelles
         self.address1_start_entry.insert(0, str(self.cu48_ranges[0][0]))
@@ -74,19 +82,23 @@ class ConfigWindow:
         self.confirm_new_master_password_entry.grid(row=2, column=1, padx=10, pady=5)
 
         self.cu48_label.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
-        self.address1_label.grid(row=4, column=0, padx=10, pady=5)
-        self.address1_start_entry.grid(row=4, column=1, padx=10, pady=5)
-        self.address1_end_entry.grid(row=4, column=2, padx=10, pady=5)
+        self.num_lockers_label.grid(row=4, column=0, padx=10, pady=5)
+        self.num_lockers_entry.grid(row=4, column=1, padx=10, pady=5)
+        self.save_button.grid(row=5, columnspan=2, padx=10, pady=5)
 
-        self.address2_label.grid(row=5, column=0, padx=10, pady=5)
-        self.address2_start_entry.grid(row=5, column=1, padx=10, pady=5)
-        self.address2_end_entry.grid(row=5, column=2, padx=10, pady=5)
+        self.address1_label.grid(row=6, column=0, padx=10, pady=5)
+        self.address1_start_entry.grid(row=6, column=2, padx=10, pady=5)
+        self.address1_end_entry.grid(row=6, column=2, padx=10, pady=5)
 
-        self.address3_label.grid(row=6, column=0, padx=10, pady=5)
-        self.address3_start_entry.grid(row=6, column=1, padx=10, pady=5)
-        self.address3_end_entry.grid(row=6, column=2, padx=10, pady=5)
+        self.address2_label.grid(row=7, column=0, padx=10, pady=5)
+        self.address2_start_entry.grid(row=7, column=1, padx=10, pady=5)
+        self.address2_end_entry.grid(row=7, column=2, padx=10, pady=5)
 
-        self.save_button.grid(row=7, columnspan=3, padx=10, pady=10)
+        self.address3_label.grid(row=8, column=0, padx=10, pady=5)
+        self.address3_start_entry.grid(row=8, column=1, padx=10, pady=5)
+        self.address3_end_entry.grid(row=8, column=2, padx=10, pady=5)
+
+        self.save_button.grid(row=9, columnspan=3, padx=10, pady=10)
 
     def save_config(self):
         """Enregistre la configuration de la fenêtre option."""
@@ -129,20 +141,42 @@ class ConfigWindow:
                 address2_range = (int(self.address2_start_entry.get()), int(self.address2_end_entry.get()))
                 address3_range = (int(self.address3_start_entry.get()), int(self.address3_end_entry.get()))
 
-                # Vérifier que le nombre total de casiers ne dépasse pas 48
-                total_lockers = (address1_range[1] - address1_range[0] + 1) + \
-                                (address2_range[1] - address2_range[0] + 1) + \
-                                (address3_range[1] - address3_range[0] + 1)
-                if total_lockers > 48:
+                # Vérifier que chaque plage CU48 ne dépasse pas 48 casiers
+                if (address1_range[1] - address1_range[0] + 1) > 48:
                     messagebox.showerror("Erreur",
-                                         "Les plages CU48 ne doivent pas contenir plus de 48 casiers au total.")
+                                         "La plage d'adresse 0x00 ne doit pas contenir plus de 48 casiers.")
+                    return
+                if (address2_range[1] - address2_range[0] + 1) > 48:
+                    messagebox.showerror("Erreur",
+                                         "La plage d'adresse 0x01 ne doit pas contenir plus de 48 casiers.")
+                    return
+                if (address3_range[1] - address3_range[0] + 1) > 48:
+                    messagebox.showerror("Erreur",
+                                         "La plage d'adresse 0x02 ne doit pas contenir plus de 48 casiers.")
                     return
 
                 self.locker_manager_gui.update_cu48_ranges(address1_range, address2_range, address3_range)
 
+                # Récupérer la valeur du nombre total de casiers sous forme de chaîne
+                num_lockers_str = self.num_lockers_entry.get()
+
+                # Vérifier si la chaîne extraite contient uniquement des chiffres et qu'elle n'est pas vide
+                if num_lockers_str.isdigit() and int(num_lockers_str) > 0:
+                    # Convertir la chaîne en entier
+                    num_lockers = int(num_lockers_str)
+                else:
+                    # Afficher une erreur si la valeur n'est pas un entier positif
+                    messagebox.showerror("Erreur", "Le nombre total de casiers doit être un entier positif.")
+                    return
+
                 # Mettre à jour la configuration
                 self.config["cu48_ranges"] = [address1_range, address2_range, address3_range]
+                self.config["num_lockers"] = num_lockers
+                print(self.config)
                 write_config_file(self.config_file_path, self.config)
+
+                # Mettre à jour le nombre de casiers dans l'application principale
+                self.locker_manager_gui.update_num_lockers(num_lockers)
 
                 # Fermer la fenêtre de configuration
                 self.master.destroy()
