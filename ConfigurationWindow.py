@@ -35,35 +35,35 @@ class ConfigWindow:
         self.cu48_ranges = self.config["cu48_ranges"]
 
         # Création des widgets pour la fenêtre de configuration.
-        self.master_password_label = tk.Label(master, text="Mot de passe maître:", font=("Arial", 36))
-        self.master_password_entry = tk.Entry(master, show="*", font=("Arial", 36))
+        self.master_password_label = tk.Label(master, text="Mot de passe maître:", font=("Arial", 30))
+        self.master_password_entry = tk.Entry(master, show="*", font=("Arial", 30))
         self.confirm_new_master_password_label = tk.Label(master, text="Confirmer le nouveau mot de passe maître:",
-                                                          font=("Arial", 36))
-        self.confirm_new_master_password_entry = tk.Entry(master, show="*", font=("Arial", 36))
-        self.new_master_password_label = tk.Label(master, text="Nouveau mot de passe maître:", font=("Arial", 36))
-        self.new_master_password_entry = tk.Entry(master, show="*", font=("Arial", 36))
-        self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config, font=("Arial", 36))
+                                                          font=("Arial", 30))
+        self.confirm_new_master_password_entry = tk.Entry(master, show="*", font=("Arial", 30))
+        self.new_master_password_label = tk.Label(master, text="Nouveau mot de passe maître:", font=("Arial", 30))
+        self.new_master_password_entry = tk.Entry(master, show="*", font=("Arial", 30))
+        self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config, font=("Arial", 30))
 
         # Création des widgets pour la configuration des adresses CU48.
-        self.num_lockers_label = tk.Label(master, text="Nombre total de casiers:", font=("Arial", 36))
-        self.num_lockers_entry = tk.Entry(master, font=("Arial", 36))
+        self.num_lockers_label = tk.Label(master, text="Nombre total de casiers:", font=("Arial", 30))
+        self.num_lockers_entry = tk.Entry(master, font=("Arial", 30))
         self.num_lockers_entry.insert(0, str(self.config.get("num_lockers", 48)))  # Valeur par défaut à 48
 
-        self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config, font=("Arial", 36))
+        self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config, font=("Arial", 30))
 
         self.cu48_label = tk.Label(master, text="Configuration des plages d'adresses par CU48:",
-                                   font=("Arial", 36, 'bold'))
-        self.address1_label = tk.Label(master, text="Adresse 0x00:", font=("Arial", 36))
-        self.address1_start_entry = tk.Entry(master, font=("Arial", 36))
-        self.address1_end_entry = tk.Entry(master, font=("Arial", 36))
+                                   font=("Arial", 30, 'bold'))
+        self.address1_label = tk.Label(master, text="Adresse 0x00:", font=("Arial", 30))
+        self.address1_start_entry = tk.Entry(master, font=("Arial", 30))
+        self.address1_end_entry = tk.Entry(master, font=("Arial", 30))
 
-        self.address2_label = tk.Label(master, text="Adresse 0x01:", font=("Arial", 36))
-        self.address2_start_entry = tk.Entry(master, font=("Arial", 36))
-        self.address2_end_entry = tk.Entry(master, font=("Arial", 36))
+        self.address2_label = tk.Label(master, text="Adresse 0x01:", font=("Arial", 30))
+        self.address2_start_entry = tk.Entry(master, font=("Arial", 30))
+        self.address2_end_entry = tk.Entry(master, font=("Arial", 30))
 
-        self.address3_label = tk.Label(master, text="Adresse 0x02:", font=("Arial", 36))
-        self.address3_start_entry = tk.Entry(master, font=("Arial", 36))
-        self.address3_end_entry = tk.Entry(master, font=("Arial", 36))
+        self.address3_label = tk.Label(master, text="Adresse 0x02:", font=("Arial", 30))
+        self.address3_start_entry = tk.Entry(master, font=("Arial", 30))
+        self.address3_end_entry = tk.Entry(master, font=("Arial", 30))
 
         # Remplir les champs de saisie avec les plages actuelles
         self.address1_start_entry.insert(0, str(self.cu48_ranges[0][0]))
@@ -87,7 +87,7 @@ class ConfigWindow:
         self.save_button.grid(row=5, columnspan=2, padx=10, pady=5)
 
         self.address1_label.grid(row=6, column=0, padx=10, pady=5)
-        self.address1_start_entry.grid(row=6, column=2, padx=10, pady=5)
+        self.address1_start_entry.grid(row=6, column=1, padx=10, pady=5)
         self.address1_end_entry.grid(row=6, column=2, padx=10, pady=5)
 
         self.address2_label.grid(row=7, column=0, padx=10, pady=5)
@@ -100,6 +100,14 @@ class ConfigWindow:
 
         self.save_button.grid(row=9, columnspan=3, padx=10, pady=10)
 
+        # Ajouter un bouton "Fermer" pour fermer la fenêtre de configuration.
+        self.close_button = tk.Button(master, text="Fermer", command=self.close_config_window, font=("Arial", 30))
+        self.close_button.grid(row=10, columnspan=3, padx=10, pady=10)
+        
+    def close_config_window(self):
+        """Ferme la fenêtre de configuration."""
+        self.master.destroy()
+        
     def save_config(self):
         """Enregistre la configuration de la fenêtre option."""
         # Récupérer le mot de passe maître entré par l'utilisateur
@@ -172,7 +180,6 @@ class ConfigWindow:
                 # Mettre à jour la configuration
                 self.config["cu48_ranges"] = [address1_range, address2_range, address3_range]
                 self.config["num_lockers"] = num_lockers
-                print(self.config)
                 write_config_file(self.config_file_path, self.config)
 
                 # Mettre à jour le nombre de casiers dans l'application principale

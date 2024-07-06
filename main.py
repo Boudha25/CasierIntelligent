@@ -136,43 +136,41 @@ class LockerManagerGUI:
         self.config = read_config_file(config_file_path)
         self.cu48_ranges = self.config["cu48_ranges"]
         self.num_lockers = self.config.get("num_lockers", 48)  # Valeur par défaut à 48
-
-        # Configuration des lignes de la grille. Ajustement automatique.
-        for i in range(numb_lockers):
-            master.grid_rowconfigure(i, weight=1)
-
-        # Configuration des colonnes de la grille
-        for j in range(8):  # ou tout autre nombre de colonnes que vous utilisez
-            master.grid_columnconfigure(j, weight=1)
+        
+        # Calculer dynamiquement le nombre de colonnes pour afficher les casiers sur 3 lignes.
+        num_columns = (numb_lockers + 2) // 3  # +2 pour arrondir correctement en cas de nombre non divisible par 3
 
         # Créer un cadre pour les boutons de casiers et la scrollbar
         self.locker_frame = ctk.CTkFrame(master)
-        self.locker_frame.grid(row=0, column=0, columnspan=8, sticky='ew')
+        self.locker_frame.grid(row=0, column=0, columnspan=num_columns, sticky='ew')
 
         # Créer un canvas pour contenir les boutons de casiers
-        self.locker_canvas = tk.Canvas(self.locker_frame)
+        self.locker_canvas = tk.Canvas(self.locker_frame, width=1920, height=300)
         self.locker_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
+        
         # Ajouter une scrollbar horizontale pour le canvas
-        self.scrollbar = tk.Scrollbar(self.locker_frame, orient=tk.HORIZONTAL, command=self.locker_canvas.xview)
-        self.scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+        # Ajuster la largeur de la scrollbar
+        self.scrollbar = tk.Scrollbar(master, orient=tk.HORIZONTAL, command=self.locker_canvas.xview, width=50)
+        self.scrollbar.grid(row=1, column=0, columnspan=num_columns, sticky='ew')
         self.locker_canvas.configure(xscrollcommand=self.scrollbar.set)
 
         # Créer un frame dans le canvas pour les boutons de casiers
         self.button_frame = ctk.CTkFrame(self.locker_canvas)
         self.locker_canvas.create_window((0, 0), window=self.button_frame, anchor='nw')
-
-        # Créer les boutons des casiers et les ajouter à la liste locker_buttons
+        
+        # Ajouter les boutons de casiers dans une grille de 2 lignes
         for i in range(1, numb_lockers + 1):
-            button = ctk.CTkButton(self.button_frame, text=f"Casier {i}", width=180, height=100,
+            row = (i - 1) // (numb_lockers // 3)
+            column = (i - 1) % (numb_lockers // 3)
+            button = ctk.CTkButton(self.button_frame, text=f"Casier {i}", width=200, height=75,
                                    font=("Arial", 24),
                                    corner_radius=5,
                                    border_width=5,
                                    hover_color="grey",
                                    fg_color="grey",
                                    command=lambda num=i: self.toggle_locker(num))
-            button.grid(row=0, column=i - 1, padx=5, pady=5)
-            self.locker_buttons.append(button)  # Ajouter le bouton à la liste locker_buttons.
+            button.grid(row=row, column=column, padx=10, pady=10)
+            self.locker_buttons.append(button)
 
             self.update_locker_button(i)
 
@@ -183,34 +181,34 @@ class LockerManagerGUI:
         # Crée les éléments de l'interface utilisateur
         self.password_label = ctk.CTkLabel(master, height=30, text="Entrer un mot de passe de 4 à 8 chiffres, "
                                                                    "\n et sélectionner un casier:", font=("Arial", 30))
-        self.password_label.grid(row=(numb_lockers - 1) // 5 + 1, column=0, columnspan=4, pady=20)
+        self.password_label.grid(row=(numb_lockers - 1) // 5 + 0, column=11, columnspan=20, pady=10)
 
-        self.password_entry = ctk.CTkEntry(master, show="*", textvariable=self.current_password, width=200, height=50,
+        self.password_entry = ctk.CTkEntry(master, show="*", textvariable=self.current_password, width=200, height=60,
                                            font=("Arial", 30))
-        self.password_entry.grid(row=(numb_lockers - 1) // 5 + 2, column=0, columnspan=4, pady=5)
+        self.password_entry.grid(row=(numb_lockers - 1) // 5 + 1, column=11, columnspan=20, pady=5)
         self.password_entry.icursor(ctk.END)  # Place le curseur à la fin du champ de mot de passe.
 
         self.status_label = ctk.CTkLabel(master, text="", width=40, height=30, font=("Arial", 30))
-        self.status_label.grid(row=(numb_lockers - 1) // 5 + 3, columnspan=4, pady=5, sticky="n")
+        self.status_label.grid(row=(numb_lockers - 1) // 5 + 2, column=11, columnspan=20, pady=5, sticky="n")
 
         self.keypad_frame = ctk.CTkFrame(master, fg_color="white")  # Couleur de fond par défaut
-        self.keypad_frame.grid(row=(numb_lockers - 1) // 5 + 4, rowspan=2, column=0, columnspan=4, pady=5, sticky="n")
+        self.keypad_frame.grid(row=(numb_lockers - 1) // 5 + 3, rowspan=2, column=11, columnspan=20, pady=5, sticky="n")
 
         # Ajouter le checkbox pour envoyer le mot de passe par SMS
         self.send_sms_var = tk.IntVar()
-        self.send_sms_checkbox = ctk.CTkCheckBox(master, text="Envoyer le mot de passe par texto", width=10, height=10,
+        self.send_sms_checkbox = ctk.CTkCheckBox(master, text="Envoyer le mot de passe par texto", width=20, height=10,
                                                  variable=self.send_sms_var, onvalue=True, offvalue=False,
                                                  font=("Arial", 30), command=self.show_phone_entry)
-        self.send_sms_checkbox.grid(row=(numb_lockers - 1) // 5 + 1, rowspan=2, column=4, columnspan=5, pady=20,
-                                    sticky="nw")
+        self.send_sms_checkbox.grid(row=(numb_lockers - 1) // 5 + 0, column=1, columnspan=10, pady=15, sticky="nw")
 
         # Ajouter le champ pour saisir le numéro de téléphone.
         self.phone_number_label = ctk.CTkLabel(master, text="Numéro de téléphone:", font=("Arial", 30))
-        self.phone_number_label.grid(row=(numb_lockers - 1) // 5 + 1, column=4, columnspan=10, pady=0, sticky="sw")
+        self.phone_number_label.grid(row=(numb_lockers - 1) // 5 + 1, column=1, columnspan=10, pady=0, sticky="nw")
         self.phone_number_var = tk.StringVar()
         self.phone_number_var.trace("w", lambda *args: self.format_phone_number())
-        self.phone_number_entry = ctk.CTkEntry(master, font=("Arial", 30), width=180, height=60, textvariable=self.phone_number_var)
-        self.phone_number_entry.grid(row=(numb_lockers - 1) // 5 + 2, column=4, columnspan=10, pady=5, sticky="nw")
+        self.phone_number_entry = ctk.CTkEntry(master, font=("Arial", 30), width=250, height=50,
+                                               textvariable=self.phone_number_var)
+        self.phone_number_entry.grid(row=(numb_lockers - 1) // 5 + 2, column=1, columnspan=10, pady=5, sticky="nw")
         self.phone_number_entry.icursor(ctk.END)  # Place le curseur à la fin du champ.
 
         # Masquer initialement le champ de numéro de téléphone
@@ -220,8 +218,8 @@ class LockerManagerGUI:
 
         # Ajouter le champ pour afficher les instructions.
         self.instruction_label = ctk.CTkLabel(master, text="Instructions:\n", font=("Arial", 30))
-        self.instruction_label.grid(row=(numb_lockers - 1) // 5 + 3, rowspan=2, column=4, columnspan=10,
-                                    padx=0, pady=5, sticky="nw")
+        self.instruction_label.grid(row=(numb_lockers - 1) // 5 + 3, column=0, columnspan=10,
+                                    padx=20, pady=0, sticky="nw")
         self.instruction_line_label = ctk.CTkLabel(master, text="-Pour ouvrir un casier : \n"
                                                                 "1. À l'aide du clavier, saisissez un mot de "
                                                                 "passe de 4 à 8 chiffres.\n"
@@ -236,7 +234,8 @@ class LockerManagerGUI:
                                                                 "avez choisi à l'étape 1.\n"
                                                                 "2. Cliquez sur le casier que vous avez verrouillé.\n",
                                                    font=("Arial", 30), justify="left")
-        self.instruction_line_label.grid(row=(numb_lockers - 1) // 5 + 4, column=4, columnspan=10, pady=0, sticky="nw")
+        self.instruction_line_label.grid(row=(numb_lockers - 1) // 5 + 4, column=0, columnspan=10,
+                                         padx=20, pady=0, sticky="nw")
 
         self.selected_entry = "password"  # Définir par défaut que le mot de passe est sélectionné
         # Placer le curseur par défaut dans le champ d'entrée du mot de passe
@@ -270,7 +269,7 @@ class LockerManagerGUI:
 
         # Associer la barre de menu à la fenêtre principale.
         master.configure(menu=menubar)
-
+        
     def open_config_window(self):
         """Ouvre la fenêtre de configuration."""
         try:
@@ -280,8 +279,8 @@ class LockerManagerGUI:
                 # Créer et afficher la fenêtre de configuration.
                 config_window = ctk.CTkToplevel(self.master)
                 config_window.title("Configuration")
-                config_window.geometry("1500x800")
-                config_window.resizable(False, False)
+                config_window.geometry("1800x800")
+                config_window.attributes('-fullscreen', "True")
                 config_window.state('normal')  # Mettre la fenêtre au premier plan.
 
                 config_window.grab_set()  # Empêcher l'accès à la fenêtre principale.
@@ -296,7 +295,7 @@ class LockerManagerGUI:
 
     def open_help_window(self):
         """Ouvre une fenêtre d'aide affichant les instructions pour ouvrir et fermer un casier."""
-        help_text = ("-Pour ouvrir un casier : \n"
+        help_text = ("\n\n-Pour ouvrir un casier : \n"
                      "1. À l'aide du pavé numérique, saisissez un mot de passe de 4 à 8 chiffres.\n"
                      "2. Cochez la case (Envoyer le mot de passe par texto), facultatif.\n"
                      "3. Saisissez les 10 chiffres de votre numéro de cellulaire, facultatif.\n"
@@ -583,7 +582,7 @@ def quitter_application(_event=None):
 
 
 # Donne le nombre de casiers à créer.
-num_lockers = 30
+num_lockers = 120
 
 #  Emplacement du fichier de configuration.
 config_file_path = "config.json"
@@ -605,8 +604,7 @@ root.bind("<Escape>", quitter_application)
 
 
 # Crée une instance de DatabaseManager pour gérer la base de données.
-db_manager = DatabaseManager('/Users/Utilisateur/Google Drive/Documents de '
-                             'Stéphane/Projet/Python/CasierIntelligent/data/database.db')
+db_manager = DatabaseManager('/home/pi/programme/CasierIntelligent/data/database.db')
 
 # Crée une instance de CU48Communication pour gérer la communication avec le CU48.
 # Remarque : status_label=None signifie que le label d'état n'est pas utilisé dans cet exemple
@@ -620,4 +618,3 @@ app = LockerManagerGUI(root, num_lockers, cu48)
 
 # Lance la boucle principale de l'interface graphique Tkinter, qui gère les événements et les interactions utilisateur.
 root.mainloop()
-
