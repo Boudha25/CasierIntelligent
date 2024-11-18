@@ -1,9 +1,21 @@
+# -*- coding: utf-8 -*-
+# -*- coding: latin-1 -*-
+##############################
+#   Auteur: Stéphane April   #
+#   stephaneapril@gmail.com  #
+#   Mai 2024 ver.1           #
+##############################
+from Database import DatabaseManager
+from ConfigurationWindow import ConfigWindow, read_config_file, write_config_file
+from Cu48Communication import CU48Communication
 import hashlib
-import sqlite3
+import re
 import tkinter as tk
 from tkinter import Menu, messagebox
 import customtkinter as ctk  # Importer customTkinter au lieu de tkinter
-import serial
+from twilio.rest import Client
+import os
+from dotenv import load_dotenv
 
 
 class Locker:
@@ -107,168 +119,6 @@ class LockerManager:
         self.db_manager.update_master_password(new_master_password_hash)
 
 
-class DatabaseManager:
-    def __init__(self, db_file):
-        """Initialise le gestionnaire de base de données avec le fichier de base de données spécifié."""
-        try:
-            self.conn = sqlite3.connect(db_file)
-            self.cursor = self.conn.cursor()
-            self.create_tables()
-        except sqlite3.Error as e:
-            print("Erreur lors de la connexion à la base de données:", e)
-
-    def __del__(self):
-        """Ferme la connexion à la base de données lors de la destruction de l'objet."""
-        try:
-            self.conn.close()  # Fermer la connexion à la base de données
-        except Exception as e:
-            print("Erreur lors de la fermeture de la connexion à la base de données:", e)
-
-    def create_tables(self):
-        """Crée les 2 tables de la base de données Password et Lockers."""
-        try:
-            # Créer les tables si elles n'existent pas déjà
-            self.cursor.execute('''CREATE TABLE IF NOT EXISTS passwords (
-                                    locker_number INTEGER PRIMARY KEY,
-                                    password TEXT UNIQUE
-                                  )''')
-            self.cursor.execute('''CREATE TABLE IF NOT EXISTS lockers (
-                                    locker_number INTEGER PRIMARY KEY,
-                                    locked INTEGER
-                                  )''')
-            self.conn.commit()
-
-            # Vérifier si le mot de passe maître par défaut existe déjà dans la base de données
-            default_master_password = self.get_master_password()
-            if default_master_password is None:
-                # S'il n'existe pas, générer un hachage pour le mot de passe maître par défaut
-                # et l'ajouter à la base de données.
-                hashed_default_master_password = hashlib.sha256(b"88888888").hexdigest()
-                self.cursor.execute('''INSERT INTO passwords (locker_number, password) VALUES (?, ?)''',
-                                    (0, hashed_default_master_password))
-                self.conn.commit()
-        except sqlite3.Error as e:
-            print("Erreur lors de la création des tables dans la base de données:", e)
-
-    def update_password(self, locker_number, password):
-        """Met à jour les mots de passe dans le gestionnaire de base de données."""
-        try:
-            hashed_password = hashlib.sha256(password.encode()).hexdigest()
-            self.cursor.execute('''INSERT OR REPLACE INTO passwords (locker_number, password)
-                                   VALUES (?, ?)''', (locker_number, hashed_password))
-            self.conn.commit()
-        except sqlite3.Error as e:
-            print("Erreur lors de la mise à jour du mot de passe dans la base de données:", e)
-
-    def get_password(self, locker_number):
-        """Récupère le mot de passe dans le gestionnaire de base de données par casier."""
-        try:
-            self.cursor.execute('''SELECT password FROM passwords WHERE locker_number = ?''', (locker_number,))
-            result = self.cursor.fetchone()
-            if result:
-                return result[0]
-            return None
-        except sqlite3.Error as e:
-            print("Erreur de récupération du mot de passe dans la base de données:", e)
-
-    def update_locker_state(self, locker_number, locked):
-        """Met à jour l'état des casiers dans la base de donnée."""
-        try:
-            self.cursor.execute('''INSERT OR REPLACE INTO lockers (locker_number, locked)
-                                   VALUES (?, ?)''', (locker_number, int(locked)))
-            self.conn.commit()
-        except sqlite3.Error as e:
-            print("Erreur de mise à jour de l'état du casier dans la base de données:", e)
-
-    def get_master_password(self):
-        """Récupérer le mot de passe maître par défaut à partir de la base de données."""
-        try:
-            #  Le mot de passe maitre est enregistré dans le casier zéro.
-            self.cursor.execute('''SELECT password FROM passwords WHERE locker_number = 0''')
-            result = self.cursor.fetchone()
-            if result is None:
-                return None
-            else:
-                return result[0]  # Retourner le hachage du mot de passe maître par défaut
-        except sqlite3.Error as e:
-            print("Erreur de récupération du mot de passe maitre dans la base de données:", e)
-
-    def update_master_password(self, new_master_password_hash):
-        """Met à jour le mot de passe maître dans la base de données."""
-        try:
-            self.cursor.execute('''UPDATE passwords SET password = ? WHERE locker_number = 0''',
-                                (new_master_password_hash,))
-            self.conn.commit()
-        except sqlite3.Error as e:
-            print("Erreur lors de la mise à jour du mot de passe maître dans la base de données:", e)
-
-    def get_locker_state(self, locker_number):
-        """Récupérer l'état des casiers à partir de la base de données."""
-        try:
-            self.cursor.execute('''SELECT locked FROM lockers WHERE locker_number = ?''', (locker_number,))
-            result = self.cursor.fetchone()
-            if result:
-                return bool(result[0])
-            return None
-        except sqlite3.Error as e:
-            print("Erreur de de récupération de l'état du casier dans la base de données:", e)
-
-
-class CU48Communication:
-    def __init__(self, port='com3', baudrate=19200, status_label=None):
-        """Initialise une communication série pour communiquer avec le CU48."""
-        print("Port série utilisé:", port)  # Affiche la valeur du port série.
-        try:
-            if port is not None:
-                self.ser = serial.Serial(port, baudrate, timeout=1)
-                self.status_label = status_label  # Ajouter le status_label comme attribut.
-            else:
-                raise ValueError("Aucun port spécifié.")
-
-        except (serial.SerialException, ValueError) as e:
-            print("Erreur lors de l'initialisation de CU48Communication:", e)
-
-    def __enter__(self):
-        """Permet l'utilisation de la classe avec le mot-clé 'with'."""
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        """Ferme la connexion série lors de la sortie d'un contexte 'with'."""
-        try:
-            self.ser.close()  # Fermer le port série
-        except Exception as e:
-            print("Erreur lors de la fermeture du port série:", e)
-
-    def send_command(self, addr, locker, cmd):
-        """Envoie une commande au CU48."""
-        #  addr est l'adresse hexadécimale du CU48.
-        try:
-            command = bytearray([0x02, addr, locker, cmd, 0x03])
-            checksum = sum(command) & 0xFF
-            command.append(checksum)
-            self.ser.write(command)
-            print("addr:", addr, "locker:", locker + 1, "cmd:", cmd)
-        except serial.SerialException as e:
-            print("Erreur lors de l'envoi de la commande série:", e)
-
-    def update_status(self, message):  # Affiche-les prints dans le status_label.
-        """Met à jour l'état dans le status_label s'il est disponible, sinon affiche le message dans la console."""
-        if self.status_label:
-            try:
-                self.status_label.configure(text=message)
-            except Exception as e:
-                print("Erreur lors de la mise à jour de l'état:", e)
-        else:
-            print(message)
-
-    def close(self):
-        """Ferme la connexion série."""
-        try:
-            self.ser.close()
-        except Exception as e:
-            print("Erreur lors de la fermeture du port série:", e)
-
-
 class LockerManagerGUI:
     def __init__(self, master, numb_lockers, cu48_communication=None):
         """Initialise l'interface graphique du gestionnaire de casiers."""
@@ -280,38 +130,128 @@ class LockerManagerGUI:
         self.locker_buttons = []  # Initialiser la liste locker_buttons.
         self.db_manager = db_manager
         self.cu48 = None
+        self.config_file_path = config_file_path
 
-        # Créer les boutons des casiers et les ajouter à la liste locker_buttons
+        # Lire la configuration
+        self.config = read_config_file(config_file_path)
+        self.cu48_ranges = self.config["cu48_ranges"]
+        self.num_lockers = self.config.get("num_lockers", 48)  # Valeur par défaut à 48
+        
+        # Calculer dynamiquement le nombre de colonnes pour afficher les casiers sur 3 lignes.
+        num_columns = (numb_lockers + 2) // 3  # +2 pour arrondir correctement en cas de nombre non divisible par 3
+
+        # Créer un cadre pour les boutons de casiers et la scrollbar
+        self.locker_frame = ctk.CTkFrame(master)
+        self.locker_frame.grid(row=0, column=0, columnspan=num_columns, sticky='ew')
+
+        # Créer un canvas pour contenir les boutons de casiers
+        self.locker_canvas = tk.Canvas(self.locker_frame, width=1920, height=300)
+        self.locker_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        # Ajouter une scrollbar horizontale pour le canvas
+        # Ajuster la largeur de la scrollbar
+        self.scrollbar = tk.Scrollbar(master, orient=tk.HORIZONTAL, command=self.locker_canvas.xview, width=50)
+        self.scrollbar.grid(row=1, column=0, columnspan=num_columns, sticky='ew')
+        self.locker_canvas.configure(xscrollcommand=self.scrollbar.set)
+
+        # Créer un frame dans le canvas pour les boutons de casiers
+        self.button_frame = ctk.CTkFrame(self.locker_canvas)
+        self.locker_canvas.create_window((0, 0), window=self.button_frame, anchor='nw')
+        
+        # Ajouter les boutons de casiers dans une grille de 2 lignes
         for i in range(1, numb_lockers + 1):
-            button = ctk.CTkButton(master, text=f"Casier {i}", width=120, height=50,
-                                   font=("Arial", 20),
+            row = (i - 1) // (numb_lockers // 3)
+            column = (i - 1) % (numb_lockers // 3)
+            button = ctk.CTkButton(self.button_frame, text=f"Casier {i}", width=200, height=75,
+                                   font=("Arial", 24),
                                    corner_radius=5,
                                    border_width=5,
                                    hover_color="grey",
                                    fg_color="grey",
                                    command=lambda num=i: self.toggle_locker(num))
-            button.grid(row=(i - 1) // 8, column=(i - 1) % 8, padx=5, pady=5)
-            self.locker_buttons.append(button)  # Ajouter le bouton à la liste locker_buttons.
+            button.grid(row=row, column=column, padx=10, pady=10)
+            self.locker_buttons.append(button)
 
             self.update_locker_button(i)
 
-        # Crée les éléments de l'interface utilisateur
-        self.password_label = ctk.CTkLabel(master, text="Entrer un mot de passe de 4 à 8 chiffres, "
-                                                        "\n et sélectionner un casier:", font=("Arial", 24))
-        self.password_label.grid(row=(numb_lockers - 1) // 5 + 2, column=0, columnspan=5, pady=5)
+        # Ajuster la taille du canvas et de ses widgets
+        self.button_frame.update_idletasks()
+        self.locker_canvas.config(scrollregion=self.locker_canvas.bbox("all"))
 
-        self.password_entry = ctk.CTkEntry(master, show="*", textvariable=self.current_password, width=200, height=40)
-        self.password_entry.grid(row=(numb_lockers - 1) // 5 + 3, column=0, columnspan=5, pady=5)
-        self.password_entry.focus()  # Met le curseur dans le champ Entry.
+        # Crée les éléments de l'interface utilisateur
+        self.password_label = ctk.CTkLabel(master, height=30, text="Entrer un mot de passe de 4 à 8 chiffres, "
+                                                                   "\n et sélectionner un casier:", font=("Arial", 30))
+        self.password_label.grid(row=(numb_lockers - 1) // 5 + 0, column=11, columnspan=20, pady=10)
+
+        self.password_entry = ctk.CTkEntry(master, show="*", textvariable=self.current_password, width=200, height=60,
+                                           font=("Arial", 30))
+        self.password_entry.grid(row=(numb_lockers - 1) // 5 + 1, column=11, columnspan=20, pady=5)
         self.password_entry.icursor(ctk.END)  # Place le curseur à la fin du champ de mot de passe.
 
-        self.status_label = ctk.CTkLabel(master, text="", width=400, height=64, font=("Arial", 24))
-        self.status_label.grid(row=(numb_lockers - 1) // 5 + 4, columnspan=5, pady=5)
+        self.status_label = ctk.CTkLabel(master, text="", width=40, height=30, font=("Arial", 30))
+        self.status_label.grid(row=(numb_lockers - 1) // 5 + 2, column=11, columnspan=20, pady=5, sticky="n")
 
         self.keypad_frame = ctk.CTkFrame(master, fg_color="white")  # Couleur de fond par défaut
-        self.keypad_frame.grid(row=(numb_lockers - 1) // 5 + 5, column=0, columnspan=5, pady=5)
+        self.keypad_frame.grid(row=(numb_lockers - 1) // 5 + 3, rowspan=2, column=11, columnspan=20, pady=5, sticky="n")
 
-        self.create_keypad()
+        # Ajouter le checkbox pour envoyer le mot de passe par SMS
+        self.send_sms_var = tk.IntVar()
+        self.send_sms_checkbox = ctk.CTkCheckBox(master, text="Envoyer le mot de passe par texto", width=20, height=10,
+                                                 variable=self.send_sms_var, onvalue=True, offvalue=False,
+                                                 font=("Arial", 30), command=self.show_phone_entry)
+        self.send_sms_checkbox.grid(row=(numb_lockers - 1) // 5 + 0, column=1, columnspan=10, pady=15, sticky="nw")
+
+        # Ajouter le champ pour saisir le numéro de téléphone.
+        self.phone_number_label = ctk.CTkLabel(master, text="Numéro de téléphone:", font=("Arial", 30))
+        self.phone_number_label.grid(row=(numb_lockers - 1) // 5 + 1, column=1, columnspan=10, pady=0, sticky="nw")
+        self.phone_number_var = tk.StringVar()
+        self.phone_number_var.trace("w", lambda *args: self.format_phone_number())
+        self.phone_number_entry = ctk.CTkEntry(master, font=("Arial", 30), width=250, height=50,
+                                               textvariable=self.phone_number_var)
+        self.phone_number_entry.grid(row=(numb_lockers - 1) // 5 + 2, column=1, columnspan=10, pady=5, sticky="nw")
+        self.phone_number_entry.icursor(ctk.END)  # Place le curseur à la fin du champ.
+
+        # Masquer initialement le champ de numéro de téléphone
+        self.phone_number_label.grid_remove()
+        self.phone_number_entry.grid_remove()
+        self.selected_entry = None
+
+        # Ajouter le champ pour afficher les instructions.
+        self.instruction_label = ctk.CTkLabel(master, text="Instructions:\n", font=("Arial", 30))
+        self.instruction_label.grid(row=(numb_lockers - 1) // 5 + 3, column=0, columnspan=10,
+                                    padx=20, pady=0, sticky="nw")
+        self.instruction_line_label = ctk.CTkLabel(master, text="-Pour ouvrir un casier : \n"
+                                                                "1. À l'aide du clavier, saisissez un mot de "
+                                                                "passe de 4 à 8 chiffres.\n"
+                                                                "2.(facultatif) Cochez la case (Envoyer le mot de "
+                                                                "passe par texto).\n"
+                                                                "3.(facultatif) Saisissez les 10 chiffres de votre "
+                                                                "numéro de cellulaire.\n"
+                                                                "4. Sélectionnez le casier que vous souhaitez ouvrir.\n"
+                                                                "5. Le casier s'ouvrira automatiquement.\n\n"
+                                                                "-Pour déverrouiller un casier : \n"
+                                                                "1. Saisissez le mot de passe utilisateur que vous "
+                                                                "avez choisi à l'étape 1.\n"
+                                                                "2. Cliquez sur le casier que vous avez verrouillé.\n",
+                                                   font=("Arial", 30), justify="left")
+        self.instruction_line_label.grid(row=(numb_lockers - 1) // 5 + 4, column=0, columnspan=10,
+                                         padx=20, pady=0, sticky="nw")
+
+        self.selected_entry = "password"  # Définir par défaut que le mot de passe est sélectionné
+        # Placer le curseur par défaut dans le champ d'entrée du mot de passe
+        self.password_entry.focus_set()
+        # Associer les événements de focus aux entrées pour mettre à jour selected_entry
+        self.password_entry.bind("<FocusIn>", lambda event: self.set_selected_entry("password"))
+        self.password_entry.bind("<FocusOut>", lambda event: self.clear_selected_entry("password"))
+        self.phone_number_entry.bind("<FocusIn>", lambda event: self.set_selected_entry("phone_number"))
+        self.phone_number_entry.bind("<FocusOut>", lambda event: self.clear_selected_entry("phone_number"))
+        # Expression régulière pour valider le numéro de téléphone
+        self.phone_regex = re.compile(r'^\d{10}$')  # Format : 10 chiffres sans espaces ni caractères spéciaux
+
+        # Lier l'événement de saisie au champ d'entrée du numéro de téléphone
+        self.phone_number_entry.bind("<KeyRelease>", self.validate_phone_number)
+
+        self.create_keypad()  # Création du clavier.
         self.clear_status()  # Efface le champ status et écrit le mot de bienvenu.
 
         # Créer la barre de menu.
@@ -320,16 +260,16 @@ class LockerManagerGUI:
         # Créer un menu cascade pour les options.
         options_menu = Menu(menubar, tearoff=0)
         aide_menu = Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="Options", menu=options_menu)
-        menubar.add_cascade(label="Aide", menu=aide_menu)
+        menubar.add_cascade(label="Options", font=("Arial", 20), menu=options_menu)
+        menubar.add_cascade(label="Aide", font=("Arial", 30), menu=aide_menu)
 
         # Ajouter les options de configuration au menu cascade.
-        options_menu.add_command(label="Configurer", command=self.open_config_window, font=("Arial", 14))
-        aide_menu.add_command(label="Instructions", command=self.open_help_window, font=("Arial", 14))
+        options_menu.add_command(label="Configurer", command=self.open_config_window, font=("Arial", 24))
+        aide_menu.add_command(label="Instructions", command=self.open_help_window, font=("Arial", 24))
 
         # Associer la barre de menu à la fenêtre principale.
-        master.config(menu=menubar)
-
+        master.configure(menu=menubar)
+        
     def open_config_window(self):
         """Ouvre la fenêtre de configuration."""
         try:
@@ -339,14 +279,14 @@ class LockerManagerGUI:
                 # Créer et afficher la fenêtre de configuration.
                 config_window = ctk.CTkToplevel(self.master)
                 config_window.title("Configuration")
-                config_window.geometry("500x250")
-                config_window.resizable(False, False)
+                config_window.geometry("1800x800")
+                config_window.attributes('-fullscreen', "True")
                 config_window.state('normal')  # Mettre la fenêtre au premier plan.
 
                 config_window.grab_set()  # Empêcher l'accès à la fenêtre principale.
 
                 # Passer l'instance de LockerManagerGUI à la fenêtre de configuration.
-                ConfigWindow(config_window, self, master_password)
+                ConfigWindow(config_window, self, master_password, config_file_path)
             else:
                 messagebox.showerror("Erreur", "Impossible de récupérer le mot de passe maître.")
         except Exception as e:
@@ -355,32 +295,38 @@ class LockerManagerGUI:
 
     def open_help_window(self):
         """Ouvre une fenêtre d'aide affichant les instructions pour ouvrir et fermer un casier."""
-        help_text = ("Pour ouvrir un casier : \n"
+        help_text = ("\n\n-Pour ouvrir un casier : \n"
                      "1. À l'aide du pavé numérique, saisissez un mot de passe de 4 à 8 chiffres.\n"
-                     "2. Sélectionnez le casier que vous souhaitez ouvrir.\n"
-                     "3. Le casier s'ouvrira automatiquement.\n\n"
-                     "Pour déverrouiller un casier : \n"
-                     "4. Saisissez le mot de passe utilisateur que vous avez choisi à l'étape 1.\n"
-                     "5. Cliquez sur le casier que vous avez verrouillé.\n")
+                     "2. Cochez la case (Envoyer le mot de passe par texto), facultatif.\n"
+                     "3. Saisissez les 10 chiffres de votre numéro de cellulaire, facultatif.\n"
+                     "4. Sélectionnez le casier que vous souhaitez ouvrir.\n"
+                     "5. Le casier s'ouvrira automatiquement.\n\n"
+                     "-Pour déverrouiller un casier : \n"
+                     "1. Saisissez le mot de passe utilisateur que vous avez choisi à l'étape 1.\n"
+                     "2. Cliquez sur le casier que vous avez verrouillé.\n\n"
+                     )
 
         # Créer une nouvelle fenêtre pour afficher l'aide.
         help_window = ctk.CTkToplevel(self.master)
         help_window.title("Aide")
-        help_window.geometry("700x300")
+        help_window.geometry("1500x400")
+        help_window.attributes('-fullscreen', "True")
         help_window.state('normal')
 
         help_window.grab_set()  # Empêcher l'accès à la fenêtre principale.
 
         # Ajouter un label avec le texte d'aide.
         help_label = ctk.CTkLabel(help_window, text=help_text, justify="left")
-        help_label.cget("font").configure(size=20)
+        help_label.cget("font").configure(size=40)
         help_label.pack()
 
         # Ajouter un bouton "Fermer" pour fermer la fenêtre d'aide.
-        close_button = ctk.CTkButton(help_window, text="Fermer", command=lambda: self.close_help_window(help_window))
+        close_button = ctk.CTkButton(help_window, text="Fermer", font=("Arial", 40),
+                                     command=lambda: self.close_help_window(help_window))
         close_button.pack()
 
-    def close_help_window(self, window):
+    @staticmethod
+    def close_help_window(window):
         """Ferme la fenêtre d'aide."""
         window.destroy()
 
@@ -388,6 +334,19 @@ class LockerManagerGUI:
         """Met à jour la configuration avec le nouveau mot de passe maître."""
         # Mettre à jour la configuration avec le nouveau mot de passe maître
         self.locker_manager.master_password = new_master_password
+
+    def update_num_lockers(self, new_num_lockers):
+        """Met à jour le nombre de casiers."""
+        self.num_lockers = new_num_lockers
+        # Mettre à jour le fichier main.py
+        with open('main.py', 'r') as file:
+            lines = file.readlines()
+        with open('main.py', 'w') as file:
+            for line in lines:
+                if line.startswith("num_lockers ="):
+                    file.write(f"num_lockers = {new_num_lockers}\n")
+                else:
+                    file.write(line)
 
     def toggle_locker(self, locker_number):
         """Verrouille ou déverrouille un casier en fonction de son état actuel."""
@@ -403,8 +362,9 @@ class LockerManagerGUI:
                     self.update_locker_button(locker_number)
                     self.update_status(message)
                     # Envoyer la commande pour déverrouiller le casier.
-                    cu48_address = self.get_cu48_address(locker_number)
-                    self.cu48_communication.send_command(cu48_address, locker_number - 1, 0x51)
+                    # Envoyer la commande pour verrouiller ou déverrouiller le casier.
+                    cu48_address, locker_index = self.get_cu48_address(locker_number)
+                    self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
                 else:
                     self.update_status(message)
             else:
@@ -413,9 +373,12 @@ class LockerManagerGUI:
                 if message.startswith("Casier"):
                     self.update_locker_button(locker_number)
                     self.update_status(message)
-                    # Envoyer la commande pour verrouiller le casier.
-                    cu48_address = self.get_cu48_address(locker_number)
-                    self.cu48_communication.send_command(cu48_address, locker_number - 1, 0x51)
+                    # Envoyer la commande pour verrouiller ou déverrouiller le casier.
+                    cu48_address, locker_index = self.get_cu48_address(locker_number)
+                    self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
+                    self.send_sms()  # Envoie un sms.
+                    self.send_sms_checkbox.deselect()  # Décoche la case envoi par sms.
+                    self.show_phone_entry()  # Relance la méthode pour effacer les widgets.
                 else:
                     self.update_status(message)
         else:
@@ -427,15 +390,22 @@ class LockerManagerGUI:
         # Effacer le statut après 30 secondes.
         self.master.after(30000, self.clear_status)
 
-    @staticmethod
-    def get_cu48_address(locker_number):
-        """Retourne l'adresse du CU48 en fonction du numéro de casier."""
-        if 1 <= locker_number <= 24:
-            return 0x00
-        elif 25 <= locker_number <= 48:
-            return 0x01
-        else:
-            return 0x02
+    def update_cu48_ranges(self, address1_range, address2_range, address3_range):
+        """Met à jour les plages d'adresses CU48."""
+        self.cu48_ranges[0] = address1_range
+        self.cu48_ranges[1] = address2_range
+        self.cu48_ranges[2] = address3_range
+
+        # Sauvegarder la configuration mise à jour
+        self.config["cu48_ranges"] = [address1_range, address2_range, address3_range]
+        write_config_file(self.config_file_path, self.config)
+
+    def get_cu48_address(self, locker_number):
+        """Retourne l'adresse du CU48 et l'emplacement de branchement du casier en fonction de son numéro."""
+        for index, (start, end) in enumerate(self.cu48_ranges):
+            if start <= locker_number <= end:
+                return index, locker_number - start
+        return None, None
 
     def update_locker_button(self, locker_number):
         """Met à jour l'apparence du bouton du casier pour refléter son état."""
@@ -455,26 +425,46 @@ class LockerManagerGUI:
             ("1", 0, 0), ("2", 0, 1), ("3", 0, 2),
             ("4", 1, 0), ("5", 1, 1), ("6", 1, 2),
             ("7", 2, 0), ("8", 2, 1), ("9", 2, 2),
-            ("0", 3, 1), ("<<", 3, 2)
+            ("0", 3, 1), ("Efface", 3, 2)
         ]
         for (text, row, column) in buttons:
             button = ctk.CTkButton(self.keypad_frame, text=text,
                                    fg_color="grey",  # Couleur de fond par défaut
-                                   font=("Arial", 24),
-                                   height=50,
-                                   width=100,
+                                   font=("Arial", 60),
+                                   height=100,
+                                   width=180,
                                    command=lambda t=text: self.keypad_input(t))
             button.grid(row=row, column=column, padx=5, pady=5)
 
+    def set_selected_entry(self, entry_name):
+        """Mettre à jour la variable selected_entry lorsqu'une entrée est sélectionnée."""
+        self.selected_entry = entry_name
+
+    def clear_selected_entry(self, entry_name):
+        """Effacer la variable selected_entry lorsqu'une entrée n'est plus sélectionnée."""
+        if self.selected_entry == entry_name:
+            self.selected_entry = None
+
     def keypad_input(self, value):
-        """Gère l'entrée du pavé numérique."""
-        current_password = self.current_password.get()
-        if value == "<<":
-            current_password = current_password[:-1]  # Supprimer le dernier caractère.
+        """Gère l'entrée du pavé numérique en fonction de l'entrée sélectionnée."""
+        current_value = ""
+        if self.selected_entry == "password":
+            current_value = self.current_password.get()
+        elif self.selected_entry == "phone_number":
+            current_value = self.phone_number_entry.get()
+
+        if value == "Efface":
+            current_value = ""
         else:
-            current_password += value
-        self.current_password.set(current_password)
-        self.password_entry.icursor(tk.END)  # Place le curseur à la fin du champ de mot de passe.
+            current_value += value
+
+        if self.selected_entry == "password":
+            self.current_password.set(current_value)
+            self.password_entry.icursor(tk.END)  # Place le curseur à la fin du champ de mot de passe.
+
+        elif self.selected_entry == "phone_number":
+            self.phone_number_entry.delete(0, tk.END)  # Effacer le contenu actuel de l'entrée
+            self.phone_number_entry.insert(tk.END, current_value)  # Insérer le nouveau numéro de téléphone
 
     def update_status(self, message):
         """Met à jour le statut (message au-dessus du clavier)."""
@@ -485,81 +475,136 @@ class LockerManagerGUI:
         self.current_password.set("")  # Efface le champ mot de passe.
         self.password_entry.icursor(tk.END)  # Place le curseur à la fin du champ de mot de passe
 
+    def clear_phone_number(self):
+        """Efface le champ numéro de téléphone."""
+        self.phone_number_entry.delete(0, tk.END)
+
     def clear_status(self):
         """Efface le statut."""
         self.status_label.configure(text="Bienvenue Empire47.")
 
-
-class ConfigWindow:
-    def __init__(self, master, locker_manager_gui, master_password_hash):
-        """Initialise la fenêtre de configuration."""
-        self.master = master
-        self.locker_manager_gui = locker_manager_gui
-        self.master_password_hash = master_password_hash
-
-        # Création des widgets pour la fenêtre de configuration.
-        self.master_password_label = tk.Label(master, text="Mot de passe maître:", font=("Arial", 14))
-        self.master_password_entry = tk.Entry(master, show="*")
-        self.confirm_new_master_password_label = tk.Label(master, text="Confirmer le nouveau mot de passe maître:", font=("Arial", 14))
-        self.confirm_new_master_password_entry = tk.Entry(master, show="*")
-        self.new_master_password_label = tk.Label(master, text="Nouveau mot de passe maître:", font=("Arial", 14))
-        self.new_master_password_entry = tk.Entry(master, show="*")
-        self.save_button = tk.Button(master, text="Enregistrer", command=self.save_config, font=("Arial", 14))
-
-        # Placement des widgets dans la fenêtre.
-        self.master_password_label.grid(row=0, column=0, padx=10, pady=5)
-        self.master_password_entry.grid(row=0, column=1, padx=10, pady=5)
-        self.new_master_password_label.grid(row=1, column=0, padx=10, pady=5)
-        self.new_master_password_entry.grid(row=1, column=1, padx=10, pady=5)
-        self.confirm_new_master_password_label.grid(row=2, column=0, padx=10, pady=5)
-        self.confirm_new_master_password_entry.grid(row=2, column=1, padx=10, pady=5)
-        self.save_button.grid(row=4, columnspan=2, padx=10, pady=5)
-
-    def save_config(self):
-        """Enregistre la configuration de la fenêtre option."""
-        # Récupérer le mot de passe maître entré par l'utilisateur
-        entered_master_password = self.master_password_entry.get()
-
-        # Vérifier si le mot de passe maître actuel est correct
-        entered_master_password_hash = hashlib.sha256(entered_master_password.encode()).hexdigest()
-        if entered_master_password_hash == self.master_password_hash:
-            # Récupérer le nouveau mot de passe maître et sa confirmation
-            new_master_password = self.new_master_password_entry.get()
-            confirm_new_master_password = self.confirm_new_master_password_entry.get()
-            # Vérifier si le nouveau mot de passe maître respecte les conditions (4 à 8 chiffres)
-            if new_master_password.isdigit() and 4 <= len(new_master_password) <= 8:
-
-                # Vérifier si les deux mots de passe correspondent
-                if new_master_password == confirm_new_master_password:
-                    # Hasher le nouveau mot de passe maître
-                    new_master_password_hash = hashlib.sha256(new_master_password.encode()).hexdigest()
-
-                    # Mettre à jour la configuration dans l'application principale
-                    self.locker_manager_gui.update_config(new_master_password_hash)
-
-                    # Mettre à jour le mot de passe maître dans la base de données
-                    self.locker_manager_gui.db_manager.update_master_password(new_master_password_hash)
-
-                    # Fermer la fenêtre de configuration
-                    self.master.destroy()
-                else:
-                    messagebox.showerror("Erreur", "Les mots de passe ne correspondent pas.")
-            else:
-                messagebox.showerror("Erreur", "Le nouveau mot de passe maître doit contenir entre 4 et 8 chiffres.")
+    def show_phone_entry(self):
+        """Affiche le champ de numéro de téléphone si la case à cocher est cochée."""
+        if self.send_sms_var.get():
+            self.phone_number_label.grid()
+            self.phone_number_entry.grid()
+            self.phone_number_entry.focus()
         else:
-            messagebox.showerror("Erreur", "Mot de passe maître incorrect")
+            self.phone_number_label.grid_remove()
+            self.phone_number_entry.grid_remove()
+            # Effacer le champ d'entrée du numéro de téléphone lorsque la case à cocher est décochée.
+            self.phone_number_entry.delete(0, tk.END)
+            # Réinitialiser la couleur de fond du champ d'entrée à sa couleur normale (noir)
+            self.phone_number_entry.configure(fg_color="white")  # Couleur de fond normale
+
+    def validate_phone_number(self, _event):
+        """Valide le numéro de téléphone lors de la saisie."""
+        phone_number = self.phone_number_entry.get()
+
+        # Vérifier si le numéro de téléphone correspond à l'expression régulière
+        if re.match(r'^\(\d{3}\)\d{3}-\d{4}$', phone_number):
+            self.phone_number_entry.configure(text_color="black")  # Réinitialiser la couleur du texte
+            return True
+        else:
+            self.phone_number_entry.configure(fg_color="red")  # Afficher en rouge si le numéro est invalide
+            return False
+
+    def send_sms(self):
+        """Fonction pour envoyer le mot de passe par SMS."""
+        # Récupérer le mot de passe actuel
+        current_password = self.current_password.get()
+
+        # Vérifier si l'utilisateur a coché la case pour envoyer par SMS
+        if self.send_sms_var.get() == 1:
+            # Récupérer le numéro de téléphone saisi par l'utilisateur
+            phone_number = self.phone_number_entry.get()
+
+            try:
+                # Valider le numéro de téléphone
+                if self.validate_phone_number(phone_number):
+                    # Ici, vous devriez implémenter la logique pour envoyer
+                    # le SMS avec le mot de passe.
+                    # Vous pouvez utiliser des bibliothèques Python comme
+                    # Twilio pour envoyer des SMS
+                    # Charger les variables d'environnement du fichier .env
+                    load_dotenv(dotenv_path='secret.env')
+                    # Utiliser les secrets du fichier secret.env.
+                    account_sid = os.getenv('ACCOUNT_SID')
+                    auth_token = os.getenv('AUTH_TOKEN')
+
+                    client = Client(account_sid, auth_token)
+
+                    if current_password.strip() != "":
+                        message = client.messages.create(
+                            from_='+15818905458',
+                            to='+1' + phone_number,
+                            body=f"Votre mot de passe casier Empire47 est : {current_password}"
+                        )
+                        print(message.sid)
+
+                        # Effacer le numéro de téléphone et revenir à la saisie du mot de passe
+                        self.clear_phone_number()
+                        self.password_entry.focus()
+
+                        # Afficher une boîte de dialogue pour confirmer l'envoi du SMS
+                        messagebox.showinfo("SMS envoyé", f"Le mot de passe a été envoyé à {phone_number} par SMS.")
+                    else:
+                        # Afficher un message d'erreur si le mot de passe est vide
+                        messagebox.showerror("Erreur", "Le mot de passe est vide. Veuillez entrer un mot de passe.")
+                else:
+                    # Afficher un message d'erreur si le numéro de téléphone est invalide
+                    messagebox.showerror("Erreur", "Veuillez saisir un numéro de téléphone valide.")
+            except Exception as e:
+                # Afficher un message d'erreur générique en cas d'erreur inattendue
+                messagebox.showerror("Erreur", f"Une erreur est survenue lors de l'envoi du SMS : {str(e)}")
+
+    def format_phone_number(self):
+        """Ajuste automatiquement le numéro de téléphone dans le format (123)123-1234."""
+        # Récupérer le numéro de téléphone entré par l'utilisateur
+        phone_number = self.phone_number_var.get()
+
+        # Vérifier si le numéro de téléphone est vide
+
+        # Supprimer tous les caractères non numériques du numéro de téléphone
+        digits = re.sub(r"\D", "", phone_number)
+
+        # Formater le numéro selon le format spécifié ((123)123-1234)
+        formatted_number = "(" + digits[:3] + ")" + digits[3:6] + "-" + digits[6:10]
+
+        # Mettre à jour le champ de saisie du numéro de téléphone avec le numéro formaté
+        self.phone_number_entry.delete(0, tk.END)
+        self.phone_number_entry.insert(0, formatted_number)
+
+
+# Fonction à exécuter pour quitter l'application
+def quitter_application(_event=None):
+    root.destroy()
 
 
 # Donne le nombre de casiers à créer.
-num_lockers = 48
+num_lockers = 120
+
+#  Emplacement du fichier de configuration.
+config_file_path = "config.json"
 
 # Crée une instance principale de l'interface graphique Tkinter.
 root = ctk.CTk()
 root.title("Gestion des Casiers")
 root.configure(background="white")  # couleur de fond
+# Définition de la résolution de l'écran
+largeur_screen = root.winfo_screenwidth()
+hauteur_screen = root.winfo_screenheight()
+# Définition des dimensions de la fenêtre
+root.geometry(f"{largeur_screen}x{hauteur_screen}")
+print("Écran", largeur_screen, hauteur_screen)
+# Affichage de la fenêtre en plein écran.
+root.attributes("-fullscreen", True)  # Enlève le X pour pouvoir fermer la fenêtre.
+# Lier la touche "<Echap>" pour quitter l'application.
+root.bind("<Escape>", quitter_application)
+
 
 # Crée une instance de DatabaseManager pour gérer la base de données.
-db_manager = DatabaseManager('data/database.db')
+db_manager = DatabaseManager('/home/pi/programme/CasierIntelligent/data/database.db')
 
 # Crée une instance de CU48Communication pour gérer la communication avec le CU48.
 # Remarque : status_label=None signifie que le label d'état n'est pas utilisé dans cet exemple

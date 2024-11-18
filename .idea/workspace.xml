@@ -4,15 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48.">
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Ajustement visuel pour l'écran 10 pouces">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/database.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ConfigurationWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/ConfigurationWindow.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints>
+      <file url="file://$PROJECT_DIR$/main.py" />
+    </disable_hints>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -24,29 +29,49 @@
   <component name="Git.Merge.Settings">
     <option name="BRANCH" value="origin/master" />
   </component>
+  <component name="Git.Rebase.Settings">
+    <option name="NEW_BASE" value="EnvoieSMS" />
+  </component>
   <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="EnvoieSMS" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
+    <option name="PREVIEW_PUSH_PROTECTED_ONLY" value="true" />
+    <option name="PUSH_TAGS">
+      <GitPushTagMode>
+        <option name="argument" value="--follow-tags" />
+        <option name="title" value="Current Branch" />
+      </GitPushTagMode>
+    </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="CommunicationRS485" />
+        <entry key="$PROJECT_DIR$" value="ConfigurationDesCU48" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "history": [
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;history&quot;: [
     {
-      "searchQuery": "boudha25",
-      "state": "OPEN",
-      "assignee": "Boudha25"
+      &quot;searchQuery&quot;: &quot;boudha25&quot;,
+      &quot;state&quot;: &quot;OPEN&quot;,
+      &quot;assignee&quot;: &quot;Boudha25&quot;
     }
   ],
-  "lastFilter": {
-    "searchQuery": "boudha25",
-    "state": "OPEN",
-    "assignee": "Boudha25"
-  }
-}]]></component>
+  &quot;lastFilter&quot;: {}
+}</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Boudha25/CasierIntelligent.git&quot;,
@@ -68,18 +93,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python tests.Python tests in test_locker_manager.py.executor": "Run",
-    "Python.CU48.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.test_locker_manager.executor": "Run",
-    "git-widget-placeholder": "MultiCU48",
-    "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/Bibliotheque/venv",
-    "settings.editor.selected.configurable": "settings.json.schema.catalog"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests in test_locker_manager.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.CU48.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_locker_manager.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;AjustementVisuel&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/CasierIntelligent/Cu48Communication.py&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.json.schema.catalog&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Utilisateur\Google Drive\Documents de Stéphane\Projet\Python\Bibliotheque\venv" />
@@ -286,10 +313,151 @@
       <option name="project" value="LOCAL" />
       <updated>1714964426611</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel.">
+      <option name="closed" value="true" />
+      <created>1714998459097</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1714998459097</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel.">
+      <option name="closed" value="true" />
+      <created>1715125521138</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1715125521139</updated>
+    </task>
+    <task id="LOCAL-00023" summary=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
+      <option name="closed" value="true" />
+      <created>1715308158286</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1715308158286</updated>
+    </task>
+    <task id="LOCAL-00024" summary=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
+      <option name="closed" value="true" />
+      <created>1715308493457</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1715308493457</updated>
+    </task>
+    <task id="LOCAL-00025" summary=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
+      <option name="closed" value="true" />
+      <created>1715308825184</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1715308825184</updated>
+    </task>
+    <task id="LOCAL-00026" summary=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
+      <option name="closed" value="true" />
+      <created>1715309852215</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1715309852215</updated>
+    </task>
+    <task id="LOCAL-00027" summary=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
+      <option name="closed" value="true" />
+      <created>1715309884457</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1715309884457</updated>
+    </task>
+    <task id="LOCAL-00028" summary=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py.">
+      <option name="closed" value="true" />
+      <created>1715459706672</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1715459706672</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Mot de passe par SMS fonctionne.  Les secrets sont dans le fichier secret.env qui est dans le .getignore.  Prêt à être livré.">
+      <option name="closed" value="true" />
+      <created>1715547383291</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1715547383291</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Séparation du code en fichier.">
+      <option name="closed" value="true" />
+      <created>1715548627598</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1715548627598</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Séparation du code en fichier.">
+      <option name="closed" value="true" />
+      <created>1715548667400</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1715548667400</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Amélioration du positionnement des Widgets.">
+      <option name="closed" value="true" />
+      <created>1715603783427</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1715603783427</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Séparation et création du fichier Cu48Communication.py. Prêt à être livré.">
+      <option name="closed" value="true" />
+      <created>1715604051343</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1715604051343</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Séparation et création du fichier Cu48Communication.py. Prêt à être livré.">
+      <option name="closed" value="true" />
+      <created>1715620150330</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1715620150330</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Séparation et création du fichier Cu48Communication.py. Prêt à être livré.">
+      <option name="closed" value="true" />
+      <created>1715620372267</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1715620372267</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Ajout de plages pour configurer les casiers dans les CU48, dans la fenêtre de configuration.">
+      <option name="closed" value="true" />
+      <created>1716647424895</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1716647424895</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Ajustement visuel pour l'écran 10 pouces">
+      <option name="closed" value="true" />
+      <created>1719671856009</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1719671856009</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="944c721d-2b41-43ac-a297-6e8303562cf9" value="TOOL_WINDOW" />
+      </map>
+    </option>
     <option name="RECENT_FILTERS">
       <map>
         <entry key="Branch">
@@ -307,6 +475,11 @@
     </option>
     <option name="TAB_STATES">
       <map>
+        <entry key="944c721d-2b41-43ac-a297-6e8303562cf9">
+          <value>
+            <State />
+          </value>
+        </entry>
         <entry key="MAIN">
           <value>
             <State>
@@ -347,6 +520,14 @@
     <MESSAGE value="Ajout d'une base de donnée pour enregistrer l'état et les mot de passes des casiers en cas de panne de courant." />
     <MESSAGE value="Ajout de conditions try except pour renforcer le code et sécurisation du mot de passe maitre." />
     <MESSAGE value="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48." />
-    <option name="LAST_COMMIT_MESSAGE" value="Ajout de module CU48.  Les casiers sont ouvert en fonction de leur emplacement sur le CU48. Ajout de la méthode get_cu48_address qui détermine quel casier va sur quel CU48." />
+    <MESSAGE value="Amélioration de l'apparence avec Customtkinter.  Amélioration des fenêtres TopLevel." />
+    <MESSAGE value=" Ajout de la fonctionnalité d'envoi du mot de passe par SMS. J'ai retiré aussi la classe DatabaseManager du fichier Main pour la mettre dans un autre fichier Database.py." />
+    <MESSAGE value="Mot de passe par SMS fonctionne.  Les secrets sont dans le fichier secret.env qui est dans le .getignore.  Prêt à être livré." />
+    <MESSAGE value="Séparation du code en fichier." />
+    <MESSAGE value="Amélioration du positionnement des Widgets." />
+    <MESSAGE value="Séparation et création du fichier Cu48Communication.py. Prêt à être livré." />
+    <MESSAGE value="Ajout de plages pour configurer les casiers dans les CU48, dans la fenêtre de configuration." />
+    <MESSAGE value="Ajustement visuel pour l'écran 10 pouces" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ajustement visuel pour l'écran 10 pouces" />
   </component>
 </project>
