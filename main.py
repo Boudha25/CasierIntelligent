@@ -78,7 +78,7 @@ class LockerManager:
 
     def initialize_lockers(self, numb_lockers):
         """Initialise les casiers en récupérant leurs états et mots de passe depuis la base de données."""
-        for i in range(1, numb_lockers + 1):
+        for i in range(2, numb_lockers + 1):
             # Récupérer l'état du casier depuis la base de données
             locker_locked = self.db_manager.get_locker_state(i)
             # Récupérer le mot de passe du casier depuis la base de données
@@ -136,7 +136,7 @@ class LockerManagerGUI:
         self.config = read_config_file(config_file_path)
         self.cu48_ranges = self.config["cu48_ranges"]
         self.num_lockers = self.config.get("num_lockers", 48)  # Valeur par défaut à 48
-        
+
         # Calculer dynamiquement le nombre de colonnes pour afficher les casiers sur 3 lignes.
         num_columns = (numb_lockers + 2) // 3  # +2 pour arrondir correctement en cas de nombre non divisible par 3
 
@@ -145,9 +145,9 @@ class LockerManagerGUI:
         self.locker_frame.grid(row=0, column=0, columnspan=num_columns, sticky='ew')
 
         # Créer un canvas pour contenir les boutons de casiers
-        self.locker_canvas = tk.Canvas(self.locker_frame, width=1920, height=300)
+        self.locker_canvas = tk.Canvas(self.locker_frame, width=1900, height=300)
         self.locker_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        
+
         # Ajouter une scrollbar horizontale pour le canvas
         # Ajuster la largeur de la scrollbar
         self.scrollbar = tk.Scrollbar(master, orient=tk.HORIZONTAL, command=self.locker_canvas.xview, width=50)
@@ -157,11 +157,11 @@ class LockerManagerGUI:
         # Créer un frame dans le canvas pour les boutons de casiers
         self.button_frame = ctk.CTkFrame(self.locker_canvas)
         self.locker_canvas.create_window((0, 0), window=self.button_frame, anchor='nw')
-        
+
         # Ajouter les boutons de casiers dans une grille de 2 lignes
-        for i in range(1, numb_lockers + 1):
-            row = (i - 1) // (numb_lockers // 3)
-            column = (i - 1) % (numb_lockers // 3)
+        for i in range(2, numb_lockers + 1):
+            row = (i - 2) // (numb_lockers // 2)
+            column = (i - 2) % (numb_lockers // 2)
             button = ctk.CTkButton(self.button_frame, text=f"Casier {i}", width=200, height=75,
                                    font=("Arial", 24),
                                    corner_radius=5,
@@ -196,9 +196,9 @@ class LockerManagerGUI:
 
         # Ajouter le checkbox pour envoyer le mot de passe par SMS
         self.send_sms_var = tk.IntVar()
-        self.send_sms_checkbox = ctk.CTkCheckBox(master, text="Envoyer le mot de passe par texto", width=20, height=10,
+        self.send_sms_checkbox = ctk.CTkCheckBox(master, text="Envoyer le mot de passe par texto", width=20, height=20,
                                                  variable=self.send_sms_var, onvalue=True, offvalue=False,
-                                                 font=("Arial", 30), command=self.show_phone_entry)
+                                                 font=("Arial", 40), command=self.show_phone_entry)
         self.send_sms_checkbox.grid(row=(numb_lockers - 1) // 5 + 0, column=1, columnspan=10, pady=15, sticky="nw")
 
         # Ajouter le champ pour saisir le numéro de téléphone.
@@ -269,7 +269,7 @@ class LockerManagerGUI:
 
         # Associer la barre de menu à la fenêtre principale.
         master.configure(menu=menubar)
-        
+
     def open_config_window(self):
         """Ouvre la fenêtre de configuration."""
         try:
@@ -286,7 +286,10 @@ class LockerManagerGUI:
                 config_window.grab_set()  # Empêcher l'accès à la fenêtre principale.
 
                 # Passer l'instance de LockerManagerGUI à la fenêtre de configuration.
-                ConfigWindow(config_window, self, master_password, config_file_path)
+                config = ConfigWindow(config_window, self, master_password, "config.json")
+
+                # Assigner l'objet CU48Communication à la fenêtre de configuration
+                config.cu48_communication = self.cu48_communication
             else:
                 messagebox.showerror("Erreur", "Impossible de récupérer le mot de passe maître.")
         except Exception as e:
@@ -409,15 +412,14 @@ class LockerManagerGUI:
 
     def update_locker_button(self, locker_number):
         """Met à jour l'apparence du bouton du casier pour refléter son état."""
-        locker = self.locker_manager.lockers[locker_number]
-        if locker.is_locked():
-            # Rouge si le casier est verrouillé.
-            self.locker_buttons[locker_number - 1].configure(fg_color="red")
-        else:
-            # Vert si le casier est déverrouillé.
-            self.locker_buttons[locker_number - 1].configure(fg_color="green")
-        # Mettre à jour le bouton pour refléter le changement de couleur.
-        self.locker_buttons[locker_number - 1].update()
+        if locker_number == 1:
+            return  # Ignore le casier numéro 1
+        locker = self.locker_manager.lockers.get(locker_number)
+        if locker and locker.is_locked():
+            self.locker_buttons[locker_number - 2].configure(fg_color="red")
+        elif locker:
+            self.locker_buttons[locker_number - 2].configure(fg_color="green")
+        self.locker_buttons[locker_number - 2].update()
 
     def create_keypad(self):
         """Crée le pavé numérique pour entrer le mot de passe."""
@@ -582,7 +584,7 @@ def quitter_application(_event=None):
 
 
 # Donne le nombre de casiers à créer.
-num_lockers = 120
+num_lockers = 37
 
 #  Emplacement du fichier de configuration.
 config_file_path = "config.json"
@@ -598,7 +600,7 @@ hauteur_screen = root.winfo_screenheight()
 root.geometry(f"{largeur_screen}x{hauteur_screen}")
 print("Écran", largeur_screen, hauteur_screen)
 # Affichage de la fenêtre en plein écran.
-root.attributes("-fullscreen", True)  # Enlève le X pour pouvoir fermer la fenêtre.
+# root.attributes("-fullscreen", True) # Enlève le X pour pouvoir fermer la fenêtre.
 # Lier la touche "<Echap>" pour quitter l'application.
 root.bind("<Escape>", quitter_application)
 
