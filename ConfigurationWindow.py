@@ -100,14 +100,14 @@ class ConfigWindow:
 
         self.save_button.grid(row=9, columnspan=3, padx=10, pady=10)
 
-        # Ajouter un bouton "Fermer" pour fermer la fenêtre de configuration.
-        self.close_button = tk.Button(master, text="Fermer", command=self.close_config_window, font=("Arial", 30))
-        self.close_button.grid(row=10, columnspan=3, padx=10, pady=10)
-
         # Bouton pour déverrouiller le casier 1
         self.unlock_locker1_button = tk.Button(master, text="Déverrouiller casier 1",
                                                command=self.unlock_locker1, font=("Arial", 30))
-        self.unlock_locker1_button.grid(row=11, columnspan=3, padx=10, pady=10)
+        self.unlock_locker1_button.grid(row=10, columnspan=3, padx=10, pady=10)
+
+        # Ajouter un bouton "Fermer" pour fermer la fenêtre de configuration.
+        self.close_button = tk.Button(master, text="Fermer", command=self.close_config_window, font=("Arial", 30))
+        self.close_button.grid(row=11, columnspan=3, padx=10, pady=10)
 
     def close_config_window(self):
         """Ferme la fenêtre de configuration."""
