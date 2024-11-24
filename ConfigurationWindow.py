@@ -103,11 +103,16 @@ class ConfigWindow:
         # Ajouter un bouton "Fermer" pour fermer la fenêtre de configuration.
         self.close_button = tk.Button(master, text="Fermer", command=self.close_config_window, font=("Arial", 30))
         self.close_button.grid(row=10, columnspan=3, padx=10, pady=10)
-        
+
+        # Bouton pour déverrouiller le casier 1
+        self.unlock_locker1_button = tk.Button(master, text="Déverrouiller casier 1",
+                                               command=self.unlock_locker1, font=("Arial", 30))
+        self.unlock_locker1_button.grid(row=11, columnspan=3, padx=10, pady=10)
+
     def close_config_window(self):
         """Ferme la fenêtre de configuration."""
         self.master.destroy()
-        
+
     def save_config(self):
         """Enregistre la configuration de la fenêtre option."""
         # Récupérer le mot de passe maître entré par l'utilisateur
@@ -191,3 +196,20 @@ class ConfigWindow:
                 messagebox.showerror("Erreur", "Les valeurs des plages doivent être des entiers.")
         else:
             messagebox.showerror("Erreur", "Mot de passe maître incorrect")
+
+    def unlock_locker1(self):
+        """Déverrouille le casier numéro 1 après vérification du mot de passe maître."""
+        entered_password = self.master_password_entry.get()
+        entered_password_hash = hashlib.sha256(entered_password.encode()).hexdigest()
+
+        # Vérification du mot de passe maître
+        if entered_password_hash == self.master_password_hash:
+            # Initialiser la communication avec CU48
+            cu48 = self.locker_manager_gui.cu48_communication  # Supposons que la classe principale gère cette instance
+            if cu48:
+                cu48.send_command(addr=0x00, locker=0, cmd=0x51)  # Commande pour déverrouiller
+                messagebox.showinfo("Succès", "Casier 1 déverrouillé avec succès !")
+            else:
+                messagebox.showerror("Erreur", "Communication CU48 non disponible.")
+        else:
+            messagebox.showerror("Erreur", "Mot de passe maître incorrect.")
