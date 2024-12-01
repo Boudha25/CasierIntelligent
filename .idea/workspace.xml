@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Ajout du casier #1 dans la fenêtre de configuration">
-      <change beforePath="$PROJECT_DIR$/ConfigurationWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/ConfigurationWindow.py" afterDir="false" />
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Déplacement du bouton Fermer à la fin en dessous du nouveau bouton déverrouiller le casier #1.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,6 +99,7 @@
     "Python tests.Python tests in test_locker_manager.py.executor": "Run",
     "Python.CU48.executor": "Run",
     "Python.main.executor": "Run",
+    "Python.test.executor": "Run",
     "Python.test_locker_manager.executor": "Run",
     "git-widget-placeholder": "AjustementVisuel",
     "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/CasierIntelligent",
@@ -456,7 +458,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732484427242</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Déplacement du bouton Fermer à la fin en dessous du nouveau bouton déverrouiller le casier #1.">
+      <option name="closed" value="true" />
+      <created>1732484872196</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1732484872196</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -536,6 +546,7 @@
     <MESSAGE value="Ajout de plages pour configurer les casiers dans les CU48, dans la fenêtre de configuration." />
     <MESSAGE value="Ajustement visuel pour l'écran 10 pouces" />
     <MESSAGE value="Ajout du casier #1 dans la fenêtre de configuration" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ajout du casier #1 dans la fenêtre de configuration" />
+    <MESSAGE value="Déplacement du bouton Fermer à la fin en dessous du nouveau bouton déverrouiller le casier #1." />
+    <option name="LAST_COMMIT_MESSAGE" value="Déplacement du bouton Fermer à la fin en dessous du nouveau bouton déverrouiller le casier #1." />
   </component>
 </project>
