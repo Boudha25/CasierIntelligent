@@ -123,6 +123,7 @@ class LockerManagerGUI:
     def __init__(self, master, numb_lockers, cu48_communication=None):
         """Initialise l'interface graphique du gestionnaire de casiers."""
         self.master = master
+        self.curent_locker_number = None
         self.num_lockers = numb_lockers
         self.cu48_communication = cu48_communication
         self.locker_manager = LockerManager(numb_lockers, cu48_communication)
@@ -150,12 +151,6 @@ class LockerManagerGUI:
         self.locker_canvas = tk.Canvas(self.locker_frame)
         self.locker_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Ajouter une scrollbar verticale pour le canvas
-        self.scrollbar_y = tk.Scrollbar(self.locker_frame, orient=tk.VERTICAL, command=self.locker_canvas.yview,
-                                        width=50)
-        self.scrollbar_y.pack(side=tk.RIGHT, fill=tk.Y)
-        self.locker_canvas.configure(yscrollcommand=self.scrollbar_y.set)
-
         # Créer un frame dans le canvas pour les boutons de casiers
         self.button_frame = ctk.CTkFrame(self.locker_canvas)
         self.locker_canvas.create_window((0, 0), window=self.button_frame, anchor='nw')
@@ -164,7 +159,7 @@ class LockerManagerGUI:
         for i in range(2, numb_lockers + 1):
             row = (i - 2) // 4
             column = (i - 2) % 4
-            button = ctk.CTkButton(self.button_frame, text=f"Casier {i}", width=170, height=75,
+            button = ctk.CTkButton(self.button_frame, text=f"Casier {i}", width=230, height=90,
                                    font=("Arial", 24), corner_radius=5, border_width=5, hover_color="grey",
                                    fg_color="grey",
                                    command=lambda num=i: self.toggle_locker(num))
@@ -199,20 +194,21 @@ class LockerManagerGUI:
         self.keypad_frame.grid(row=3, rowspan=2, column=0, columnspan=2, pady=5, padx=20, sticky="n")
 
         self.send_sms_var = tk.IntVar()
-        self.send_sms_checkbox = ctk.CTkCheckBox(right_frame, text="Envoyer le mot de passe par texto", width=20,
-                                                 height=20,
+        self.send_sms_checkbox = ctk.CTkCheckBox(right_frame, text="Envoyer le mot,"
+                                                 "\nde passe par texto", width=20,
+                                                 height=40,
                                                  variable=self.send_sms_var, onvalue=True, offvalue=False,
-                                                 font=("Arial", 30), command=self.show_phone_entry_widget)
-        self.send_sms_checkbox.grid(row=5, column=0, columnspan=2, pady=15, padx=20, sticky="n")
+                                                 font=("Arial", 50), command=self.show_phone_entry_widget)
+        self.send_sms_checkbox.grid(row=5, rowspan=3, column=0, columnspan=2, pady=15, padx=20, sticky="n")
 
-        self.phone_number_label = ctk.CTkLabel(right_frame, text="Numéro de téléphone:", font=("Arial", 30))
-        self.phone_number_label.grid(row=6, column=0, columnspan=2, pady=0, padx=20, sticky="nw")
+        self.phone_number_label = ctk.CTkLabel(right_frame, text="Numéro de téléphone:", font=("Arial", 50))
+        self.phone_number_label.grid(row=9, column=0, columnspan=2, pady=0, padx=20, sticky="n")
         self.phone_number_label.grid_remove()
         self.phone_number_var = tk.StringVar()
         self.phone_number_var.trace("w", lambda *args: self.format_phone_number())
-        self.phone_number_entry = ctk.CTkEntry(right_frame, font=("Arial", 30), width=300, height=50,
+        self.phone_number_entry = ctk.CTkEntry(right_frame, font=("Arial", 50), width=380, height=50,
                                                textvariable=self.phone_number_var)
-        self.phone_number_entry.grid(row=6, column=0, pady=0, padx=20, sticky="ne")
+        self.phone_number_entry.grid(row=10, column=0, pady=0, padx=20, sticky="n")
         self.phone_number_entry.grid_remove()
 
         self.selected_entry = "password"
@@ -327,21 +323,34 @@ class LockerManagerGUI:
         """Verrouille ou déverrouille un casier en fonction de son état actuel."""
         is_locked = self.locker_manager.is_locked(locker_number)
         password = self.current_password.get()
+        self.curent_locker_number = locker_number
 
         if isinstance(is_locked, bool):
             """vérifie si is_locked est de type booléen."""
             if is_locked:
-                # Déverrouille le casier.
-                message = self.locker_manager.unlock_locker(locker_number, password)
-                if message.startswith("Casier"):
-                    self.update_locker_button(locker_number)
-                    self.update_status(message)
+                # Si le casier est verrouillé, demander si l'utilisateur souhaite libérer le casier.
+                release_casier = self.custom_messagebox(
+                    "Libération du casier",
+                    f"Souhaitez-vous libérer le casier {locker_number} ?\n\n"
+                )
+                if release_casier:
+                    # L'utilisateur souhaite libérer le casier
+                    # Déverrouille le casier.
+                    message = self.locker_manager.unlock_locker(locker_number, password)
+                    if message.startswith("Casier"):
+                        self.update_locker_button(locker_number)
+                        self.update_status(message)
+                        # Envoyer la commande pour verrouiller ou déverrouiller le casier.
+                        cu48_address, locker_index = self.get_cu48_address(locker_number)
+                        self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
+                    else:
+                        self.update_status(message)
+                else:
+                    # L'utilisateur ne souhaite pas libérer le casier
                     # Envoyer la commande pour déverrouiller le casier.
-                    # Envoyer la commande pour verrouiller ou déverrouiller le casier.
                     cu48_address, locker_index = self.get_cu48_address(locker_number)
                     self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
-                else:
-                    self.update_status(message)
+
             else:
                 # Verrouille le casier.
                 message = self.locker_manager.lock_locker(locker_number, password)
@@ -364,6 +373,62 @@ class LockerManagerGUI:
         self.clear_password()
         # Effacer le statut après 30 secondes.
         self.master.after(30000, self.clear_status)
+
+    def custom_messagebox(self, title, message):
+        """Affiche une boîte de dialogue demandant a l'usager si il libère le casier."""
+        # Crée une nouvelle fenêtre Toplevel
+        dialog = tk.Toplevel(self.master)
+        dialog.title(title)
+        dialog.geometry("800x500")  # Définir la taille de la boîte
+        dialog.wait_visibility()
+        dialog.grab_set()  # Rendre la fenêtre modale
+
+        # Ajoute un message avec une police plus grande
+        label = ctk.CTkLabel(
+            dialog,
+            text=message,
+            font=("Arial", 40),  # Taille du texte
+            justify="center",
+            wraplength=500
+        )
+        label.pack(pady=30, padx=20)
+
+        # Boutons Oui et Non
+        button_frame = ctk.CTkFrame(dialog)
+        button_frame.pack(pady=20)
+
+        response = tk.BooleanVar(value=False)
+
+        def on_yes():
+            response.set(True)
+            dialog.destroy()
+
+        def on_no():
+            response.set(False)
+            dialog.destroy()
+
+        yes_button = ctk.CTkButton(
+            button_frame,
+            text="Oui",
+            command=on_yes,
+            font=("Arial", 100),
+            width=250
+        )
+        yes_button.pack(side=tk.LEFT, padx=40)
+
+        no_button = ctk.CTkButton(
+            button_frame,
+            text="Non",
+            command=on_no,
+            font=("Arial", 100),
+            width=250
+        )
+        no_button.pack(side=tk.RIGHT, padx=40)
+
+        # Attendre que la fenêtre soit fermée
+        dialog.wait_window()
+
+        return response.get()
 
     def update_cu48_ranges(self, address1_range, address2_range, address3_range):
         """Met à jour les plages d'adresses CU48."""
@@ -487,6 +552,8 @@ class LockerManagerGUI:
         """Fonction pour envoyer le mot de passe par SMS."""
         # Récupérer le mot de passe actuel
         current_password = self.current_password.get()
+        # Récupérer le numéro de casier actuel
+        current_locker = self.curent_locker_number
 
         # Vérifier si l'utilisateur a coché la case pour envoyer par SMS
         if self.send_sms_var.get() == 1:
@@ -512,7 +579,7 @@ class LockerManagerGUI:
                         message = client.messages.create(
                             from_='+14385002968',
                             to='+1' + phone_number,
-                            body=f"Votre mot de passe casier Empire47 est : {current_password}"
+                            body=f"Votre mot de passe pour le casier {current_locker} Empire47 est : {current_password}"
                         )
                         print(message.sid)
 
