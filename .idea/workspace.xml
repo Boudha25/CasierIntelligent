@@ -4,18 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Ajout du casier #1 dans la fenêtre de configuration">
-      <change beforePath="$PROJECT_DIR$/ConfigurationWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/ConfigurationWindow.py" afterDir="false" />
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Réaménagement complet de l'interface. Retrait des instructions à l'écran pour permettre de mettre tous les boutons à gauche et le widget à droite.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/database.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="DaemonCodeAnalyzer">
-    <disable_hints>
-      <file url="file://$PROJECT_DIR$/main.py" />
-    </disable_hints>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -98,9 +95,10 @@
     "Python tests.Python tests in test_locker_manager.py.executor": "Run",
     "Python.CU48.executor": "Run",
     "Python.main.executor": "Run",
+    "Python.test.executor": "Run",
     "Python.test_locker_manager.executor": "Run",
     "git-widget-placeholder": "AjustementVisuel",
-    "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/CasierIntelligent",
+    "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/CasierIntelligent/main.py",
     "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "settings.json.schema.catalog"
   }
@@ -456,7 +454,23 @@
       <option name="project" value="LOCAL" />
       <updated>1732484427242</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Déplacement du bouton Fermer à la fin en dessous du nouveau bouton déverrouiller le casier #1.">
+      <option name="closed" value="true" />
+      <created>1732484872196</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1732484872196</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Réaménagement complet de l'interface. Retrait des instructions à l'écran pour permettre de mettre tous les boutons à gauche et le widget à droite.">
+      <option name="closed" value="true" />
+      <created>1733062403987</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1733062403987</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -536,6 +550,8 @@
     <MESSAGE value="Ajout de plages pour configurer les casiers dans les CU48, dans la fenêtre de configuration." />
     <MESSAGE value="Ajustement visuel pour l'écran 10 pouces" />
     <MESSAGE value="Ajout du casier #1 dans la fenêtre de configuration" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ajout du casier #1 dans la fenêtre de configuration" />
+    <MESSAGE value="Déplacement du bouton Fermer à la fin en dessous du nouveau bouton déverrouiller le casier #1." />
+    <MESSAGE value="Réaménagement complet de l'interface. Retrait des instructions à l'écran pour permettre de mettre tous les boutons à gauche et le widget à droite." />
+    <option name="LAST_COMMIT_MESSAGE" value="Réaménagement complet de l'interface. Retrait des instructions à l'écran pour permettre de mettre tous les boutons à gauche et le widget à droite." />
   </component>
 </project>
