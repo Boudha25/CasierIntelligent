@@ -30,15 +30,9 @@ Pour configurer le programme, vous pouvez accéder au menu "Options" et sélecti
 [Specification des serrures](/Datasheet/KR-S99N.pdf)  
 Pour toute question ou assistance supplémentaire, n'hésitez pas à me le faire savoir !
 
-## Author
+## Auteur
 
 👤 **Stephane April**
 
 * Github: [@boudha25](https://github.com/boudha25)
 
-## Show your support
-
-Give a ⭐️ if this project helped you!
-
-***
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
