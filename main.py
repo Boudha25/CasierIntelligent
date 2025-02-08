@@ -325,53 +325,58 @@ class LockerManagerGUI:
         password = self.current_password.get()
         self.curent_locker_number = locker_number
 
-        if isinstance(is_locked, bool):
-            """vérifie si is_locked est de type booléen."""
-            if is_locked:
-                # Si le casier est verrouillé, demander si l'utilisateur souhaite libérer le casier.
-                release_casier = self.custom_messagebox(
-                    "Libération du casier",
-                    f"Souhaitez-vous libérer le casier {locker_number} ?\n\n"
-                )
-                if release_casier:
-                    # L'utilisateur souhaite libérer le casier
-                    # Déverrouille le casier.
-                    message = self.locker_manager.unlock_locker(locker_number, password)
-                    if message.startswith("Casier"):
-                        self.update_locker_button(locker_number)
-                        self.update_status(message)
-                        # Envoyer la commande pour verrouiller ou déverrouiller le casier.
-                        cu48_address, locker_index = self.get_cu48_address(locker_number)
-                        self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
-                    else:
-                        self.update_status(message)
-                else:
-                    # L'utilisateur ne souhaite pas libérer le casier
-                    # Envoyer la commande pour déverrouiller le casier.
-                    cu48_address, locker_index = self.get_cu48_address(locker_number)
-                    self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
+        if not isinstance(is_locked, bool):
+            self.update_status(is_locked)  # Afficher un message d'erreur si le casier n'existe pas
+            return
 
+        if is_locked:
+            # Vérifier le mot de passe avant toute action
+            message = self.locker_manager.unlock_locker(locker_number, password)
+            if not message.startswith("Casier"):
+                self.update_status(message)  # Afficher un message d'erreur si le mot de passe est incorrect
+                return
+
+            # Demander si l'utilisateur veut libérer le casier
+            release_casier = self.custom_messagebox(
+                "Libération du casier",
+                f"Souhaitez-vous libérer le casier {locker_number} ?\n\n"
+                "Oui : Le casier sera marqué comme libre.\n"
+                "Non : Le casier s'ouvrira et votre mot de passe sera conservé."
+            )
+
+            # Mettre à jour l'affichage selon la réponse
+            if release_casier:
+                self.locker_manager.lockers[locker_number].password = ""  # Supprimer le mot de passe
+                self.update_locker_button(locker_number)  # Le casier devient vert (libéré)
             else:
-                # Verrouille le casier.
-                message = self.locker_manager.lock_locker(locker_number, password)
-                if message.startswith("Casier"):
-                    self.update_locker_button(locker_number)
-                    self.update_status(message)
-                    # Envoyer la commande pour verrouiller ou déverrouiller le casier.
-                    cu48_address, locker_index = self.get_cu48_address(locker_number)
-                    self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
-                    self.send_sms()  # Envoie un sms.
-                    self.send_sms_checkbox.deselect()  # Décoche la case envoi par sms.
-                    self.show_phone_entry_widget()  # Relance la méthode pour effacer les widgets.
-                else:
-                    self.update_status(message)
-        else:
-            # Le casier n'existe pas ou une autre erreur s'est produite.
-            self.update_status(is_locked)
+                self.locker_manager.lockers[locker_number].locked = True  # Marquer le casier comme occupé
+                self.update_locker_button(locker_number)  # Le casier reste rouge
 
-        # Effacer le champ mot de passe après avoir verrouillé ou déverrouillé un casier.
+            self.update_status(message)
+
+            # Ouvrir le casier après la réponse de l'utilisateur
+            cu48_address, locker_index = self.get_cu48_address(locker_number)
+            self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
+
+        else:
+            # Verrouille le casier
+            message = self.locker_manager.lock_locker(locker_number, password)
+            if message.startswith("Casier"):
+                self.update_locker_button(locker_number)
+                self.update_status(message)
+
+                # Envoyer la commande pour verrouiller le casier
+                cu48_address, locker_index = self.get_cu48_address(locker_number)
+                self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
+
+                self.send_sms()
+                self.send_sms_checkbox.deselect()
+                self.show_phone_entry_widget()
+            else:
+                self.update_status(message)
+
+        # Effacer le champ mot de passe et réinitialiser le statut après 30 secondes
         self.clear_password()
-        # Effacer le statut après 30 secondes.
         self.master.after(30000, self.clear_status)
 
     def custom_messagebox(self, title, message):
