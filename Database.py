@@ -102,8 +102,9 @@ class DatabaseManager:
         try:
             self.cursor.execute('''SELECT locked FROM lockers WHERE locker_number = ?''', (locker_number,))
             result = self.cursor.fetchone()
-            if result:
+            if result is not None:
                 return bool(result[0])
-            return None
+            return False  # Si l'état est absent, considérer le casier comme "non verrouillé"
+
         except sqlite3.Error as e:
             print("Erreur de de récupération de l'état du casier dans la base de données:", e)

@@ -340,8 +340,8 @@ class LockerManagerGUI:
             release_casier = self.custom_messagebox(
                 "Libération du casier",
                 f"Souhaitez-vous libérer le casier {locker_number} ?\n\n"
-                "Oui : Le casier sera marqué comme libre.\n"
-                "Non : Le casier s'ouvrira et votre mot de passe sera conservé."
+                "OUI: \n Le casier sera marqué comme libre.\n\n"
+                "NON: \n Le casier s'ouvrira et votre mot de passe sera conservé."
             )
 
             # Mettre à jour l'affichage selon la réponse
@@ -384,7 +384,8 @@ class LockerManagerGUI:
         # Crée une nouvelle fenêtre Toplevel
         dialog = tk.Toplevel(self.master)
         dialog.title(title)
-        dialog.geometry("800x500")  # Définir la taille de la boîte
+        # Affichage de la fenêtre en plein écran.
+        dialog.attributes("-fullscreen", True)  # Enlève le X pour pouvoir fermer la fenêtre.
         dialog.wait_visibility()
         dialog.grab_set()  # Rendre la fenêtre modale
 
@@ -394,7 +395,7 @@ class LockerManagerGUI:
             text=message,
             font=("Arial", 40),  # Taille du texte
             justify="center",
-            wraplength=500
+            wraplength=700
         )
         label.pack(pady=30, padx=20)
 

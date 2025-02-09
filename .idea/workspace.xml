@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Ajout d'une fenêtre de confirmation lors de l'ouverture d'un casier. Si l'usager désire seulement ajouter du matériel dans le casier, il peut le faire sans changer le mot de passe.">
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Correction du bug de la fenêtre de libération des casiers.  Le mot de passe est vérifié avant l'ouverture de la fenêtre.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Database.py" beforeDir="false" afterPath="$PROJECT_DIR$/Database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -86,21 +87,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Python tests.Python tests in test_locker_manager.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python.CU48.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_locker_manager.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;AjustementVisuel&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/CasierIntelligent/main.py&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.json.schema.catalog&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Python tests.Python tests in test_locker_manager.py.executor": "Run",
+    "Python.CU48.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.test_locker_manager.executor": "Run",
+    "git-widget-placeholder": "AjustementVisuel",
+    "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/CasierIntelligent/data/database.db",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "settings.json.schema.catalog"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Utilisateur\Google Drive\Documents de Stéphane\Projet\Python\CasierIntelligent" />
@@ -476,7 +477,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737731116182</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Correction du bug de la fenêtre de libération des casiers.  Le mot de passe est vérifié avant l'ouverture de la fenêtre.">
+      <option name="closed" value="true" />
+      <created>1739028207889</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1739028207889</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -533,7 +542,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Changement de couleur de fond des boutons" />
     <MESSAGE value="Maintenant, le curseur se place automatiquement à la fin du champ de mot de passe à chaque saisie, et le focus reste dans le champ de mot de passe pour faciliter la saisie." />
     <MESSAGE value="Ajour d'un mot de passe maitre." />
     <MESSAGE value="Correction de nom de variable num_lockers pour numb_lockers" />
@@ -558,6 +566,7 @@
     <MESSAGE value="Déplacement du bouton Fermer à la fin en dessous du nouveau bouton déverrouiller le casier #1." />
     <MESSAGE value="Réaménagement complet de l'interface. Retrait des instructions à l'écran pour permettre de mettre tous les boutons à gauche et le widget à droite." />
     <MESSAGE value="Ajout d'une fenêtre de confirmation lors de l'ouverture d'un casier. Si l'usager désire seulement ajouter du matériel dans le casier, il peut le faire sans changer le mot de passe." />
-    <option name="LAST_COMMIT_MESSAGE" value="Ajout d'une fenêtre de confirmation lors de l'ouverture d'un casier. Si l'usager désire seulement ajouter du matériel dans le casier, il peut le faire sans changer le mot de passe." />
+    <MESSAGE value="Correction du bug de la fenêtre de libération des casiers.  Le mot de passe est vérifié avant l'ouverture de la fenêtre." />
+    <option name="LAST_COMMIT_MESSAGE" value="Correction du bug de la fenêtre de libération des casiers.  Le mot de passe est vérifié avant l'ouverture de la fenêtre." />
   </component>
 </project>
