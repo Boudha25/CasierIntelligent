@@ -15,9 +15,12 @@ class DatabaseManager:
     def __del__(self):
         """Ferme la connexion à la base de données lors de la destruction de l'objet."""
         try:
-            self.conn.close()  # Fermer la connexion à la base de données
+            if self.conn:
+                self.conn.commit()  # Forcer la sauvegarde avant de fermer
+                self.conn.close()
+                print("Connexion à la base de données fermée proprement.")
         except Exception as e:
-            print("Erreur lors de la fermeture de la connexion à la base de données:", e)
+            print("Erreur lors de la fermeture de la base de données:", e)
 
     def create_tables(self):
         """Crée les 2 tables de la base de données Password et Lockers."""
@@ -29,7 +32,7 @@ class DatabaseManager:
                                   )''')
             self.cursor.execute('''CREATE TABLE IF NOT EXISTS lockers (
                                     locker_number INTEGER PRIMARY KEY,
-                                    locked INTEGER
+                                    locked BOOLEAN
                                   )''')
             self.conn.commit()
 
@@ -72,6 +75,15 @@ class DatabaseManager:
             self.cursor.execute('''INSERT OR REPLACE INTO lockers (locker_number, locked)
                                    VALUES (?, ?)''', (locker_number, int(locked)))
             self.conn.commit()
+
+            # Vérification immédiate
+            self.cursor.execute('''SELECT locked FROM lockers WHERE locker_number = ?''', (locker_number,))
+            result = self.cursor.fetchone()
+            if result and result[0] == int(locked):
+                print(f"Mise à jour confirmée : Casier {locker_number} -> {'Verrouillé' if locked else 'Déverrouillé'}")
+            else:
+                print(f"ERREUR : Mise à jour du casier {locker_number} non appliquée !")
+
         except sqlite3.Error as e:
             print("Erreur de mise à jour de l'état du casier dans la base de données:", e)
 
@@ -102,8 +114,9 @@ class DatabaseManager:
         try:
             self.cursor.execute('''SELECT locked FROM lockers WHERE locker_number = ?''', (locker_number,))
             result = self.cursor.fetchone()
-            if result:
+            if result is not None:
                 return bool(result[0])
-            return None
+            return False  # Si l'état est absent, considérer le casier comme "non verrouillé"
+
         except sqlite3.Error as e:
             print("Erreur de de récupération de l'état du casier dans la base de données:", e)

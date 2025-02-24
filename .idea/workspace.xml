@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Réaménagement complet de l'interface. Retrait des instructions à l'écran pour permettre de mettre tous les boutons à gauche et le widget à droite.">
+    <list default="true" id="77e92ebd-f95d-490d-b0e5-ef0e8578b2a9" name="Changes" comment="Correction du bug de libération des casiers.  L'ouverture du casier se fait après la réponse de l'usager et non avant, dans la méthode toggle_locker. Affichage de message lors de la mise à jour de la base de donnée dans la méthode update_locker_state du fichier Database.db">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/database.db" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,7 +54,6 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;history&quot;: [
@@ -98,7 +96,7 @@
     "Python.test.executor": "Run",
     "Python.test_locker_manager.executor": "Run",
     "git-widget-placeholder": "AjustementVisuel",
-    "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/CasierIntelligent/main.py",
+    "last_opened_file_path": "C:/home/pi/programme/CasierIntelligent/data/database.db",
     "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "settings.json.schema.catalog"
   }
@@ -470,7 +468,31 @@
       <option name="project" value="LOCAL" />
       <updated>1733062403987</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Ajout d'une fenêtre de confirmation lors de l'ouverture d'un casier. Si l'usager désire seulement ajouter du matériel dans le casier, il peut le faire sans changer le mot de passe.">
+      <option name="closed" value="true" />
+      <created>1737731116182</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1737731116182</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Correction du bug de la fenêtre de libération des casiers.  Le mot de passe est vérifié avant l'ouverture de la fenêtre.">
+      <option name="closed" value="true" />
+      <created>1739028207889</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1739028207889</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Correction du bug de libération des casiers.  L'ouverture du casier se fait après la réponse de l'usager et non avant, dans la méthode toggle_locker. Affichage de message lors de la mise à jour de la base de donnée dans la méthode update_locker_state du fichier Database.db">
+      <option name="closed" value="true" />
+      <created>1740417936559</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1740417936559</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -527,9 +549,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Premier commit" />
-    <MESSAGE value="Changement de couleur de fond des boutons" />
-    <MESSAGE value="Maintenant, le curseur se place automatiquement à la fin du champ de mot de passe à chaque saisie, et le focus reste dans le champ de mot de passe pour faciliter la saisie." />
     <MESSAGE value="Ajour d'un mot de passe maitre." />
     <MESSAGE value="Correction de nom de variable num_lockers pour numb_lockers" />
     <MESSAGE value="Amélioration majeure de l'apparence à l'aide de CustomTkinter." />
@@ -552,6 +571,20 @@
     <MESSAGE value="Ajout du casier #1 dans la fenêtre de configuration" />
     <MESSAGE value="Déplacement du bouton Fermer à la fin en dessous du nouveau bouton déverrouiller le casier #1." />
     <MESSAGE value="Réaménagement complet de l'interface. Retrait des instructions à l'écran pour permettre de mettre tous les boutons à gauche et le widget à droite." />
-    <option name="LAST_COMMIT_MESSAGE" value="Réaménagement complet de l'interface. Retrait des instructions à l'écran pour permettre de mettre tous les boutons à gauche et le widget à droite." />
+    <MESSAGE value="Ajout d'une fenêtre de confirmation lors de l'ouverture d'un casier. Si l'usager désire seulement ajouter du matériel dans le casier, il peut le faire sans changer le mot de passe." />
+    <MESSAGE value="Correction du bug de la fenêtre de libération des casiers.  Le mot de passe est vérifié avant l'ouverture de la fenêtre." />
+    <MESSAGE value="Correction du bug de libération des casiers.  L'ouverture du casier se fait après la réponse de l'usager et non avant, dans la méthode toggle_locker. Affichage de message lors de la mise à jour de la base de donnée dans la méthode update_locker_state du fichier Database.db" />
+    <option name="LAST_COMMIT_MESSAGE" value="Correction du bug de libération des casiers.  L'ouverture du casier se fait après la réponse de l'usager et non avant, dans la méthode toggle_locker. Affichage de message lors de la mise à jour de la base de donnée dans la méthode update_locker_state du fichier Database.db" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>94</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

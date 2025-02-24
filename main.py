@@ -93,7 +93,6 @@ class LockerManager:
         """Verrouille un casier avec le numéro spécifié et le mot de passe fourni."""
         if locker_number in self.lockers:
             message = self.lockers[locker_number].lock(password)
-            self.db_manager.update_locker_state(locker_number, True)
             return message
         else:
             return "Ce casier n'existe pas."
@@ -102,7 +101,6 @@ class LockerManager:
         """Déverrouille un casier avec le numéro spécifié et le mot de passe fourni."""
         if locker_number in self.lockers:
             message = self.lockers[locker_number].unlock(password)
-            self.db_manager.update_locker_state(locker_number, False)
             return message
         else:
             return "Ce casier n'existe pas."
@@ -195,7 +193,7 @@ class LockerManagerGUI:
 
         self.send_sms_var = tk.IntVar()
         self.send_sms_checkbox = ctk.CTkCheckBox(right_frame, text="Envoyer le mot,"
-                                                 "\nde passe par texto", width=20,
+                                                                   "\nde passe par texto", width=20,
                                                  height=40,
                                                  variable=self.send_sms_var, onvalue=True, offvalue=False,
                                                  font=("Arial", 50), command=self.show_phone_entry_widget)
@@ -274,7 +272,9 @@ class LockerManagerGUI:
                      "5. Le casier s'ouvrira automatiquement.\n\n"
                      "-Pour déverrouiller un casier : \n"
                      "1. Saisissez le mot de passe utilisateur que vous avez choisi à l'étape 1.\n"
-                     "2. Cliquez sur le casier que vous avez verrouillé.\n\n"
+                     "2. Cliquez sur le casier que vous avez verrouillé.\n"
+                     "3. Répondez à la question si vous libérez le casier ou pas.\n"
+                     "4. Le casier s'ouvrira\n\n"
                      )
 
         # Créer une nouvelle fenêtre pour afficher l'aide.
@@ -288,7 +288,7 @@ class LockerManagerGUI:
 
         # Ajouter un label avec le texte d'aide.
         help_label = ctk.CTkLabel(help_window, text=help_text, justify="left")
-        help_label.cget("font").configure(size=40)
+        help_label.cget("font").configure(size=30)
         help_label.pack()
 
         # Ajouter un bouton "Fermer" pour fermer la fenêtre d'aide.
@@ -325,53 +325,61 @@ class LockerManagerGUI:
         password = self.current_password.get()
         self.curent_locker_number = locker_number
 
-        if isinstance(is_locked, bool):
-            """vérifie si is_locked est de type booléen."""
-            if is_locked:
-                # Si le casier est verrouillé, demander si l'utilisateur souhaite libérer le casier.
-                release_casier = self.custom_messagebox(
-                    "Libération du casier",
-                    f"Souhaitez-vous libérer le casier {locker_number} ?\n\n"
-                )
-                if release_casier:
-                    # L'utilisateur souhaite libérer le casier
-                    # Déverrouille le casier.
-                    message = self.locker_manager.unlock_locker(locker_number, password)
-                    if message.startswith("Casier"):
-                        self.update_locker_button(locker_number)
-                        self.update_status(message)
-                        # Envoyer la commande pour verrouiller ou déverrouiller le casier.
-                        cu48_address, locker_index = self.get_cu48_address(locker_number)
-                        self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
-                    else:
-                        self.update_status(message)
-                else:
-                    # L'utilisateur ne souhaite pas libérer le casier
-                    # Envoyer la commande pour déverrouiller le casier.
-                    cu48_address, locker_index = self.get_cu48_address(locker_number)
-                    self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
+        if not isinstance(is_locked, bool):
+            self.update_status(is_locked)  # Casier inexistant
+            return
 
+        if is_locked:
+            # Vérifier que le mot de passe est correct AVANT de déverrouiller
+            if not self.locker_manager.lockers[locker_number].password or \
+                    hashlib.sha256(password.encode()).hexdigest() != self.locker_manager.lockers[
+                    locker_number].password:
+                self.update_status("Mot de passe incorrect.")
+                return
+
+            # Demander à l'utilisateur s'il veut libérer le casier
+            release_casier = self.custom_messagebox(
+                "Libération du casier",
+                f"Souhaitez-vous libérer le casier {locker_number} ?\n\n"
+                "OUI: \n Le casier sera marqué comme libre.\n\n"
+                "NON: \n Le casier s'ouvrira et votre mot de passe sera conservé."
+            )
+
+            if release_casier:
+                self.locker_manager.lockers[locker_number].password = ""  # Supprimer le mot de passe
+                self.locker_manager.lockers[locker_number].locked = False  # Marquer comme libre
+                self.db_manager.update_locker_state(locker_number, False)  # MAJ BD
+                print(f"✅ Casier {locker_number} libéré.")
             else:
-                # Verrouille le casier.
-                message = self.locker_manager.lock_locker(locker_number, password)
-                if message.startswith("Casier"):
-                    self.update_locker_button(locker_number)
-                    self.update_status(message)
-                    # Envoyer la commande pour verrouiller ou déverrouiller le casier.
-                    cu48_address, locker_index = self.get_cu48_address(locker_number)
-                    self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
-                    self.send_sms()  # Envoie un sms.
-                    self.send_sms_checkbox.deselect()  # Décoche la case envoi par sms.
-                    self.show_phone_entry_widget()  # Relance la méthode pour effacer les widgets.
-                else:
-                    self.update_status(message)
-        else:
-            # Le casier n'existe pas ou une autre erreur s'est produite.
-            self.update_status(is_locked)
+                # Casier s'ouvre, mais l'état "verrouillé" est conservé en BD
+                print(f"🔒 Casier {locker_number} conservé.")
 
-        # Effacer le champ mot de passe après avoir verrouillé ou déverrouillé un casier.
+            self.update_locker_button(locker_number)  # Mettre à jour l'interface
+            self.update_status(f"Casier {locker_number} {'libéré' if release_casier else 'conservé'}.")
+
+            # **Ouvrir le casier après la réponse**
+            cu48_address, locker_index = self.get_cu48_address(locker_number)
+            self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
+
+        else:
+            # Verrouille le casier
+            message = self.locker_manager.lock_locker(locker_number, password)
+            if message.startswith("Casier"):
+                self.update_locker_button(locker_number)
+                self.update_status(message)
+
+                # Envoyer la commande pour verrouiller le casier
+                cu48_address, locker_index = self.get_cu48_address(locker_number)
+                self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
+
+                self.send_sms()
+                self.send_sms_checkbox.deselect()
+                self.show_phone_entry_widget()
+            else:
+                self.update_status(message)
+
+        # Effacer le champ mot de passe et réinitialiser le statut après 30 secondes
         self.clear_password()
-        # Effacer le statut après 30 secondes.
         self.master.after(30000, self.clear_status)
 
     def custom_messagebox(self, title, message):
@@ -379,7 +387,8 @@ class LockerManagerGUI:
         # Crée une nouvelle fenêtre Toplevel
         dialog = tk.Toplevel(self.master)
         dialog.title(title)
-        dialog.geometry("800x500")  # Définir la taille de la boîte
+        # Affichage de la fenêtre en plein écran.
+        dialog.attributes("-fullscreen", True)  # Enlève le X pour pouvoir fermer la fenêtre.
         dialog.wait_visibility()
         dialog.grab_set()  # Rendre la fenêtre modale
 
@@ -389,7 +398,7 @@ class LockerManagerGUI:
             text=message,
             font=("Arial", 40),  # Taille du texte
             justify="center",
-            wraplength=500
+            wraplength=700
         )
         label.pack(pady=30, padx=20)
 
