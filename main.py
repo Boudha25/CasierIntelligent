@@ -272,7 +272,9 @@ class LockerManagerGUI:
                      "5. Le casier s'ouvrira automatiquement.\n\n"
                      "-Pour déverrouiller un casier : \n"
                      "1. Saisissez le mot de passe utilisateur que vous avez choisi à l'étape 1.\n"
-                     "2. Cliquez sur le casier que vous avez verrouillé.\n\n"
+                     "2. Cliquez sur le casier que vous avez verrouillé.\n"
+                     "3. Répondez à la question si vous libérez le casier ou pas.\n"
+                     "4. Le casier s'ouvrira\n\n"
                      )
 
         # Créer une nouvelle fenêtre pour afficher l'aide.
@@ -286,7 +288,7 @@ class LockerManagerGUI:
 
         # Ajouter un label avec le texte d'aide.
         help_label = ctk.CTkLabel(help_window, text=help_text, justify="left")
-        help_label.cget("font").configure(size=40)
+        help_label.cget("font").configure(size=30)
         help_label.pack()
 
         # Ajouter un bouton "Fermer" pour fermer la fenêtre d'aide.
