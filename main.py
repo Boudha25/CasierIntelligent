@@ -93,7 +93,6 @@ class LockerManager:
         """Verrouille un casier avec le numéro spécifié et le mot de passe fourni."""
         if locker_number in self.lockers:
             message = self.lockers[locker_number].lock(password)
-            self.db_manager.update_locker_state(locker_number, True)
             return message
         else:
             return "Ce casier n'existe pas."
@@ -102,7 +101,6 @@ class LockerManager:
         """Déverrouille un casier avec le numéro spécifié et le mot de passe fourni."""
         if locker_number in self.lockers:
             message = self.lockers[locker_number].unlock(password)
-            self.db_manager.update_locker_state(locker_number, False)
             return message
         else:
             return "Ce casier n'existe pas."
@@ -195,7 +193,7 @@ class LockerManagerGUI:
 
         self.send_sms_var = tk.IntVar()
         self.send_sms_checkbox = ctk.CTkCheckBox(right_frame, text="Envoyer le mot,"
-                                                 "\nde passe par texto", width=20,
+                                                                   "\nde passe par texto", width=20,
                                                  height=40,
                                                  variable=self.send_sms_var, onvalue=True, offvalue=False,
                                                  font=("Arial", 50), command=self.show_phone_entry_widget)
@@ -326,17 +324,18 @@ class LockerManagerGUI:
         self.curent_locker_number = locker_number
 
         if not isinstance(is_locked, bool):
-            self.update_status(is_locked)  # Afficher un message d'erreur si le casier n'existe pas
+            self.update_status(is_locked)  # Casier inexistant
             return
 
         if is_locked:
-            # Vérifier le mot de passe avant toute action
-            message = self.locker_manager.unlock_locker(locker_number, password)
-            if not message.startswith("Casier"):
-                self.update_status(message)  # Afficher un message d'erreur si le mot de passe est incorrect
+            # Vérifier que le mot de passe est correct AVANT de déverrouiller
+            if not self.locker_manager.lockers[locker_number].password or \
+                    hashlib.sha256(password.encode()).hexdigest() != self.locker_manager.lockers[
+                    locker_number].password:
+                self.update_status("Mot de passe incorrect.")
                 return
 
-            # Demander si l'utilisateur veut libérer le casier
+            # Demander à l'utilisateur s'il veut libérer le casier
             release_casier = self.custom_messagebox(
                 "Libération du casier",
                 f"Souhaitez-vous libérer le casier {locker_number} ?\n\n"
@@ -344,17 +343,19 @@ class LockerManagerGUI:
                 "NON: \n Le casier s'ouvrira et votre mot de passe sera conservé."
             )
 
-            # Mettre à jour l'affichage selon la réponse
             if release_casier:
                 self.locker_manager.lockers[locker_number].password = ""  # Supprimer le mot de passe
-                self.update_locker_button(locker_number)  # Le casier devient vert (libéré)
+                self.locker_manager.lockers[locker_number].locked = False  # Marquer comme libre
+                self.db_manager.update_locker_state(locker_number, False)  # MAJ BD
+                print(f"✅ Casier {locker_number} libéré.")
             else:
-                self.locker_manager.lockers[locker_number].locked = True  # Marquer le casier comme occupé
-                self.update_locker_button(locker_number)  # Le casier reste rouge
+                # Casier s'ouvre, mais l'état "verrouillé" est conservé en BD
+                print(f"🔒 Casier {locker_number} conservé.")
 
-            self.update_status(message)
+            self.update_locker_button(locker_number)  # Mettre à jour l'interface
+            self.update_status(f"Casier {locker_number} {'libéré' if release_casier else 'conservé'}.")
 
-            # Ouvrir le casier après la réponse de l'utilisateur
+            # **Ouvrir le casier après la réponse**
             cu48_address, locker_index = self.get_cu48_address(locker_number)
             self.cu48_communication.send_command(cu48_address, locker_index, 0x51)
 

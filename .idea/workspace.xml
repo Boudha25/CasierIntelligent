@@ -97,7 +97,7 @@
     "Python.test.executor": "Run",
     "Python.test_locker_manager.executor": "Run",
     "git-widget-placeholder": "AjustementVisuel",
-    "last_opened_file_path": "C:/Users/Utilisateur/Google Drive/Documents de Stéphane/Projet/Python/CasierIntelligent/data/database.db",
+    "last_opened_file_path": "C:/home/pi/programme/CasierIntelligent/data/database.db",
     "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "settings.json.schema.catalog"
   }
@@ -568,5 +568,16 @@
     <MESSAGE value="Ajout d'une fenêtre de confirmation lors de l'ouverture d'un casier. Si l'usager désire seulement ajouter du matériel dans le casier, il peut le faire sans changer le mot de passe." />
     <MESSAGE value="Correction du bug de la fenêtre de libération des casiers.  Le mot de passe est vérifié avant l'ouverture de la fenêtre." />
     <option name="LAST_COMMIT_MESSAGE" value="Correction du bug de la fenêtre de libération des casiers.  Le mot de passe est vérifié avant l'ouverture de la fenêtre." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/main.py</url>
+          <line>94</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
