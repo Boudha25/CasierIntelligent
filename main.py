@@ -332,8 +332,9 @@ class LockerManagerGUI:
         if is_locked:
             # Vérifier que le mot de passe est correct AVANT de déverrouiller
             if not self.locker_manager.lockers[locker_number].password or \
-                    hashlib.sha256(password.encode()).hexdigest() != self.locker_manager.lockers[
-                    locker_number].password:
+                    (hashlib.sha256(password.encode()).hexdigest() != self.locker_manager.lockers[
+                        locker_number].password and
+                     hashlib.sha256(password.encode()).hexdigest() != self.db_manager.get_master_password()):
                 self.update_status("Mot de passe incorrect.")
                 return
 
