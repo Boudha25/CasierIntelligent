@@ -9,6 +9,8 @@ from Database import DatabaseManager
 from ConfigurationWindow import ConfigWindow, read_config_file, write_config_file
 from Cu48Communication import CU48Communication
 import hashlib
+import logging
+from datetime import datetime
 import re
 import tkinter as tk
 from tkinter import Menu, messagebox
@@ -16,6 +18,18 @@ import customtkinter as ctk  # Importer customTkinter au lieu de tkinter
 from twilio.rest import Client
 import os
 from dotenv import load_dotenv
+
+# Création et configuration du fichier log
+LOG_FILE = "casier_log.txt"
+logging.basicConfig(filename=LOG_FILE, level=logging.INFO, format="%(message)s")
+
+
+def log_action(action, locker_number):
+    """Enregistre une action dans le fichier log avec la date et l'heure."""
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_message = f"{timestamp} - Casier {locker_number} : {action}"
+    logging.info(log_message)
+    print(log_message)  # Affichage dans la console pour debug
 
 
 class Locker:
@@ -350,9 +364,11 @@ class LockerManagerGUI:
                 self.locker_manager.lockers[locker_number].password = ""  # Supprimer le mot de passe
                 self.locker_manager.lockers[locker_number].locked = False  # Marquer comme libre
                 self.db_manager.update_locker_state(locker_number, False)  # MAJ BD
+                log_action("Casier libéré", locker_number)  # 🔹 Log de libération
                 print(f"✅ Casier {locker_number} libéré.")
             else:
                 # Casier s'ouvre, mais l'état "verrouillé" est conservé en BD
+                log_action("Casier ouvert sans libération", locker_number)  # 🔹 Log d'ouverture sans libération
                 print(f"🔒 Casier {locker_number} conservé.")
 
             self.update_locker_button(locker_number)  # Mettre à jour l'interface
@@ -368,6 +384,7 @@ class LockerManagerGUI:
             if message.startswith("Casier"):
                 self.update_locker_button(locker_number)
                 self.update_status(message)
+                log_action("Casier verrouillé", locker_number)  # 🔹 Log de verrouillage
 
                 # Envoyer la commande pour verrouiller le casier
                 cu48_address, locker_index = self.get_cu48_address(locker_number)
