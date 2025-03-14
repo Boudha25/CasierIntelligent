@@ -86,21 +86,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Python tests.Python tests in test_locker_manager.py.executor": "Run",
-    "Python.CU48.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.test.executor": "Run",
-    "Python.test_locker_manager.executor": "Run",
-    "git-widget-placeholder": "AjustementVisuel",
-    "last_opened_file_path": "C:/home/pi/programme/CasierIntelligent/data/database.db",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "settings.json.schema.catalog"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests in test_locker_manager.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.CU48.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_locker_manager.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;AjustementVisuel&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/home/pi/programme/CasierIntelligent/data/database.db&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.json.schema.catalog&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Utilisateur\Google Drive\Documents de Stéphane\Projet\Python\CasierIntelligent" />
@@ -492,7 +492,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740417936559</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Correction du bug de libération des casiers.  L'ouverture du casier se fait après la réponse de l'usager et non avant, dans la méthode toggle_locker. Affichage de message lors de la mise à jour de la base de donnée dans la méthode update_locker_state du fichier Database.db">
+      <option name="closed" value="true" />
+      <created>1740421161231</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1740421161231</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
