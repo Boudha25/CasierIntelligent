@@ -19,9 +19,20 @@ from twilio.rest import Client
 import os
 from dotenv import load_dotenv
 
-# Création et configuration du fichier log
-LOG_FILE = "casier_log.txt"
-logging.basicConfig(filename=LOG_FILE, level=logging.INFO, format="%(message)s")
+# Chemin du dossier log
+LOG_DIR = "log"
+LOG_FILE = os.path.join(LOG_DIR, "casier_log.txt")
+
+# Vérifier si le dossier log existe, sinon le créer
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+# Configuration du fichier log
+logging.basicConfig(
+    filename=LOG_FILE,
+    level=logging.INFO,
+    format="%(message)s",
+    encoding="utf-8")
 
 
 def log_action(action, locker_number):
